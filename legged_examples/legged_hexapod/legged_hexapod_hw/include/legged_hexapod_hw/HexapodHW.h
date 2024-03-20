@@ -107,8 +107,10 @@ namespace legged
     // Feedback
     ros::Subscriber jointStateSub_;
     sensor_msgs::JointState jointStateMsg_;
+    bool jointStateReceived_{false};
     ros::Subscriber imuSub_;
     sensor_msgs::Imu imuMsg_;
+    bool imuReceived_{false};
 
     // Command
     ros::Publisher jointCmdPub_;

@@ -1,4 +1,4 @@
-legged_unitree_hw:
+legged_hexapod_hw:
   loop_frequency: 500
   cycle_time_error_threshold: 0.002
   thread_priority: 95

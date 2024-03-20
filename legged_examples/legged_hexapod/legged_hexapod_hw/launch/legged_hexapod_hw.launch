@@ -1,5 +1,6 @@
 <launch>
-    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type: [elspider_air]"/>
+    <!-- <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type: [elspider_air]"/> -->
+    <arg name="robot_type" default="elspider_air" doc="Robot type: [elspider_air]"/>
 
     <param name="legged_robot_description" command="$(find xacro)/xacro $(find hexapod_robot_assets)/model/$(arg robot_type)/xacro/robot.xacro robot_type:=$(arg robot_type)
     "/>
@@ -8,5 +9,5 @@
     <rosparam file="$(find legged_hexapod_hw)/config/$(arg robot_type).yaml" command="load"/>
 
     <param name="robot_type" value="$(arg robot_type)"/>
-    <include file="$(find legged_hexapod_hw)/launch/$(arg robot_type).launch"/>
+    <node name="legged_hexapod_hw" pkg="legged_hexapod_hw" type="legged_hexapod_hw" respawn="false" clear_params="true"/>
 </launch>
