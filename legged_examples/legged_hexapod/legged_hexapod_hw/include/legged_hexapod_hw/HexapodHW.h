@@ -16,16 +16,18 @@
 
 #include <legged_hw/LeggedHW.h>
 #include <legged_hexapod_hw/JointCmd.h>
+#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/JointState.h>
 namespace legged
 {
 
   // Define JOINT_STATE_NAME and FOOT_LINK_NAME constants
   const std::vector<std::string> JOINT_NAME = {"RF_HAA", "RF_HFE", "RF_KFE",
-                                                     "RM_HAA", "RM_HFE", "RM_KFE",
-                                                     "RB_HAA", "RB_HFE", "RB_KFE",
-                                                     "LF_HAA", "LF_HFE", "LF_KFE",
-                                                     "LM_HAA", "LM_HFE", "LM_KFE",
-                                                     "LB_HAA", "LB_HFE", "LB_KFE"};
+                                               "RM_HAA", "RM_HFE", "RM_KFE",
+                                               "RB_HAA", "RB_HFE", "RB_KFE",
+                                               "LF_HAA", "LF_HFE", "LF_KFE",
+                                               "LM_HAA", "LM_HFE", "LM_KFE",
+                                               "LB_HAA", "LB_HFE", "LB_KFE"};
 
   const std::vector<std::string> CONTACT_SENSOR_NAMES = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
                                                          "LF_FOOT", "LM_FOOT", "LB_FOOT"};
@@ -82,7 +84,9 @@ namespace legged
      */
     void write(const ros::Time &time, const ros::Duration &period) override;
 
-    void updateContact(const ros::Time &time);
+    void jointStateCallback(const sensor_msgs::JointState &msg);
+
+    void imuCallback(const sensor_msgs::Imu &msg);
 
   private:
     bool setupJoints();
@@ -101,10 +105,8 @@ namespace legged
     ros::Time lastContactPub_;
 
     // Feedback
-    // JointState of Hexapod
     ros::Subscriber jointStateSub_;
     sensor_msgs::JointState jointStateMsg_;
-    // IMU of Hexapod
     ros::Subscriber imuSub_;
     sensor_msgs::Imu imuMsg_;
 

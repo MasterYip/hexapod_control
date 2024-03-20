@@ -35,12 +35,12 @@
 // Created by qiayuan on 12/27/20.
 //
 
-#include "legged_unitree_hw/UnitreeHW.h"
+#include "legged_hexapod_hw/HexapodHW.h"
 
 #include <legged_hw/LeggedHWLoop.h>
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "legged_unitree_hw");
+  ros::init(argc, argv, "legged_hexapod_hw");
   ros::NodeHandle nh;
   ros::NodeHandle robotHwNh("~");
 
@@ -55,14 +55,14 @@ int main(int argc, char** argv) {
 
   try {
     // Create the hardware interface specific to your robot
-    std::shared_ptr<legged::UnitreeHW> unitreeHw = std::make_shared<legged::UnitreeHW>();
+    std::shared_ptr<legged::HexapodHW> hexapodHw = std::make_shared<legged::HexapodHW>();
     // Initialize the hardware interface:
     // 1. retrieve configuration from rosparam
     // 2. initialize the hardware and interface it with ros_control
-    unitreeHw->init(nh, robotHwNh);
+    hexapodHw->init(nh, robotHwNh);
 
     // Start the control loop
-    legged::LeggedHWLoop controlLoop(nh, unitreeHw);
+    legged::LeggedHWLoop controlLoop(nh, hexapodHw);
 
     // Wait until shutdown signal received
     ros::waitForShutdown();

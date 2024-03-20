@@ -3,8 +3,8 @@
 // Created by qiayuan on 1/24/22.
 //
 
-#include "legged_unitree_hw/HexapodHW.h"
-
+#include "legged_hexapod_hw/HexapodHW.h"
+#include <Eigen/Dense>
 #include <sensor_msgs/Joy.h>
 #include <std_msgs/Int16MultiArray.h>
 
@@ -17,18 +17,14 @@ namespace legged
       return false;
     }
 
-    robot_hw_nh.getParam("power_limit", powerLimit_);
-
     setupJoints();
     setupImu();
     setupContactSensor(robot_hw_nh);
 
-    udp_->InitCmdData(lowCmd_);
-
     std::string robot_type;
     root_nh.getParam("robot_type", robot_type);
 
-    else
+    if (robot_type != "elspider_air")
     {
       ROS_FATAL("Unknown robot type: %s", robot_type.c_str());
       return false;
@@ -36,7 +32,6 @@ namespace legged
 
     jointStateSub_ = root_nh.subscribe("/hexapod/joint_state_fdb", 1, &HexapodHW::jointStateCallback, this);
     imuSub_ = root_nh.subscribe("/trunk_imu", 1, &HexapodHW::imuCallback, this);
-    contactPublisher_ = root_nh.advertise<std_msgs::Int16MultiArray>(std::string("/contact"), 10);
     return true;
   }
 
@@ -71,9 +66,11 @@ namespace legged
     imuData_.linearAcc_[2] = imuMsg_.linear_acceleration.z;
 
     // TODO: Update Contact State
+    Eigen::Vector3d legtorque;
     for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i)
     {
-      contactState_[i] = lowState_.footForce[i] > contactThreshold_;
+      legtorque << jointData_[i * 3].tau_, jointData_[i * 3 + 1].tau_, jointData_[i * 3 + 2].tau_;
+      contactState_[i] = legtorque.norm() > contactThreshold_;
     }
 
     // Set feedforward and velocity cmd to zero to avoid for safety when not controller setCommand
@@ -85,7 +82,6 @@ namespace legged
       handle.setVelocityDesired(0.);
       handle.setKd(3.);
     }
-    updateContact(time);
   }
 
   void HexapodHW::write(const ros::Time & /*time*/, const ros::Duration & /*period*/)
@@ -99,14 +95,13 @@ namespace legged
       jointCmdMsg_.kd[i] = jointData_[i].kd_;
     }
     jointCmdMsg_.header.stamp = ros::Time::now();
-    jointCmdPublisher_.publish(jointCmdMsg_);
+    jointCmdPub_.publish(jointCmdMsg_);
   }
 
   bool HexapodHW::setupJoints()
   {
-    for (const int index = 0, index < JOINT_NAME.size(), index++)
+    for (int index = 0; index < JOINT_NAME.size(); index++)
     {
-
       hardware_interface::JointStateHandle state_handle(JOINT_NAME.at(index), &jointData_[index].pos_, &jointData_[index].vel_,
                                                         &jointData_[index].tau_);
       jointStateInterface_.registerHandle(state_handle);
@@ -140,22 +135,6 @@ namespace legged
       contactSensorInterface_.registerHandle(ContactSensorHandle(CONTACT_SENSOR_NAMES[i], &contactState_[i]));
     }
     return true;
-  }
-
-  void HexapodHW::updateContact(const ros::Time &time)
-  {
-    if ((time - lastContactPub_).toSec() < 1 / 50.)
-    {
-      return;
-    }
-    lastContactPub_ = time;
-
-    std_msgs::Int16MultiArray contactMsg;
-    for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i)
-    {
-      contactMsg.data.push_back(lowState_.footForce[i]);
-    }
-    contactPublisher_.publish(contactMsg);
   }
 
 } // namespace legged

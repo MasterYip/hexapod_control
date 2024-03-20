@@ -129,8 +129,8 @@ namespace legged
     // mpcMrtInterface_->updatePolicy();
 
     // Evaluate the current policy
-    // vector_t optimizedState, optimizedInput;
-    // size_t plannedMode = 0;  // The mode that is active at the time the policy is evaluated at.
+    vector_t optimizedState, optimizedInput;
+    size_t plannedMode = 0;  // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
     // Whole body control (parameter definition can be found in the task file)
@@ -149,7 +149,7 @@ namespace legged
     // Safety check, if failed, stop the controller
     if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput))
     {
-      ROS_ERROR_STREAM("[Legged Controller] Safety check failed, stopping the controller.");
+      ROS_ERROR_STREAM("[Hexapod Controller] Safety check failed, stopping the controller.");
       stopRequest(time);
     }
 
@@ -292,7 +292,7 @@ namespace legged
     currentObservation_.time = 0;
   }
 
-  void LeggedCheaterController::setupStateEstimate(const std::string & /*taskFile*/, bool /*verbose*/)
+  void HexapodCheaterController::setupStateEstimate(const std::string & /*taskFile*/, bool /*verbose*/)
   {
     stateEstimate_ = std::make_shared<FromTopicStateEstimate>(leggedInterface_->getPinocchioInterface(),
                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
@@ -301,4 +301,4 @@ namespace legged
 } // namespace legged
 
 PLUGINLIB_EXPORT_CLASS(legged::HexapodController, controller_interface::ControllerBase)
-PLUGINLIB_EXPORT_CLASS(legged::LeggedCheaterController, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(legged::HexapodCheaterController, controller_interface::ControllerBase)

@@ -87,7 +87,7 @@ class HexapodController : public controller_interface::MultiInterfaceController<
   benchmark::RepeatedTimer wbcTimer_;
 };
 
-class LeggedCheaterController : public HexapodController {
+class HexapodCheaterController : public HexapodController {
  protected:
   void setupStateEstimate(const std::string& taskFile, bool verbose) override;
 };
