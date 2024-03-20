@@ -47,6 +47,7 @@ add_library(${PROJECT_NAME}
         src/WbcBase.cpp
         src/HierarchicalWbc.cpp
         src/WeightedWbc.cpp
+        src/WeightedWbcSimple.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

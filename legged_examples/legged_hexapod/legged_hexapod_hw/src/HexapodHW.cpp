@@ -3,19 +3,13 @@
 // Created by qiayuan on 1/24/22.
 //
 
-#include "legged_unitree_hw/UnitreeHW.h"
-
-#ifdef UNITREE_SDK_3_3_1
-#include "unitree_legged_sdk_3_3_1/unitree_joystick.h"
-#elif UNITREE_SDK_3_8_0
-#include "unitree_legged_sdk_3_8_0/joystick.h"
-#endif
+#include "legged_unitree_hw/HexapodHW.h"
 
 #include <sensor_msgs/Joy.h>
 #include <std_msgs/Int16MultiArray.h>
 
 namespace legged {
-bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
+bool HexapodHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   if (!LeggedHW::init(root_nh, robot_hw_nh)) {
     return false;
   }
@@ -26,27 +20,11 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   setupImu();
   setupContactSensor(robot_hw_nh);
 
-#ifdef UNITREE_SDK_3_3_1
-  udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL);
-#elif UNITREE_SDK_3_8_0
-  udp_ = std::make_shared<UNITREE_LEGGED_SDK::UDP>(UNITREE_LEGGED_SDK::LOWLEVEL, 8090, "192.168.123.10", 8007);
-#endif
-
   udp_->InitCmdData(lowCmd_);
 
   std::string robot_type;
   root_nh.getParam("robot_type", robot_type);
-#ifdef UNITREE_SDK_3_3_1
-  if (robot_type == "a1") {
-    safety_ = std::make_shared<UNITREE_LEGGED_SDK::Safety>(UNITREE_LEGGED_SDK::LeggedType::A1);
-  } else if (robot_type == "aliengo") {
-    safety_ = std::make_shared<UNITREE_LEGGED_SDK::Safety>(UNITREE_LEGGED_SDK::LeggedType::Aliengo);
-  }
-#elif UNITREE_SDK_3_8_0
-  if (robot_type == "go1") {
-    safety_ = std::make_shared<UNITREE_LEGGED_SDK::Safety>(UNITREE_LEGGED_SDK::LeggedType::Go1);
-  }
-#endif
+
   else {
     ROS_FATAL("Unknown robot type: %s", robot_type.c_str());
     return false;
@@ -57,7 +35,7 @@ bool UnitreeHW::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh) {
   return true;
 }
 
-void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
+void HexapodHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   udp_->Recv();
   udp_->GetRecv(lowState_);
 
@@ -96,7 +74,7 @@ void UnitreeHW::read(const ros::Time& time, const ros::Duration& /*period*/) {
   updateContact(time);
 }
 
-void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/) {
+void HexapodHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/) {
   for (int i = 0; i < 12; ++i) {
     lowCmd_.motorCmd[i].q = static_cast<float>(jointData_[i].posDes_);
     lowCmd_.motorCmd[i].dq = static_cast<float>(jointData_[i].velDes_);
@@ -110,7 +88,7 @@ void UnitreeHW::write(const ros::Time& /*time*/, const ros::Duration& /*period*/
   udp_->Send();
 }
 
-bool UnitreeHW::setupJoints() {
+bool HexapodHW::setupJoints() {
   for (const auto& joint : urdfModel_->joints_) {
     int leg_index = 0;
     int joint_index = 0;
@@ -146,7 +124,7 @@ bool UnitreeHW::setupJoints() {
   return true;
 }
 
-bool UnitreeHW::setupImu() {
+bool HexapodHW::setupImu() {
   imuSensorInterface_.registerHandle(hardware_interface::ImuSensorHandle("base_imu", "base_imu", imuData_.ori_, imuData_.oriCov_,
                                                                          imuData_.angularVel_, imuData_.angularVelCov_, imuData_.linearAcc_,
                                                                          imuData_.linearAccCov_));
@@ -161,7 +139,7 @@ bool UnitreeHW::setupImu() {
   return true;
 }
 
-bool UnitreeHW::setupContactSensor(ros::NodeHandle& nh) {
+bool HexapodHW::setupContactSensor(ros::NodeHandle& nh) {
   nh.getParam("contact_threshold", contactThreshold_);
   for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i) {
     contactSensorInterface_.registerHandle(ContactSensorHandle(CONTACT_SENSOR_NAMES[i], &contactState_[i]));
@@ -169,7 +147,7 @@ bool UnitreeHW::setupContactSensor(ros::NodeHandle& nh) {
   return true;
 }
 
-void UnitreeHW::updateJoystick(const ros::Time& time) {
+void HexapodHW::updateJoystick(const ros::Time& time) {
   if ((time - lastJoyPub_).toSec() < 1 / 50.) {
     return;
   }
@@ -194,7 +172,7 @@ void UnitreeHW::updateJoystick(const ros::Time& time) {
   joyPublisher_.publish(joyMsg);
 }
 
-void UnitreeHW::updateContact(const ros::Time& time) {
+void HexapodHW::updateContact(const ros::Time& time) {
   if ((time - lastContactPub_).toSec() < 1 / 50.) {
     return;
   }

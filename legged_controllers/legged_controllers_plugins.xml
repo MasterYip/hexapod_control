@@ -1,5 +1,6 @@
 <library path="lib/liblegged_controllers">
 
+    <!-- Legged Controller -->
     <class name="legged/LeggedController" type="legged::LeggedController"
            base_class_type="controller_interface::ControllerBase">
         <description>
@@ -8,6 +9,21 @@
     </class>
 
     <class name="legged/LeggedCheaterController" type="legged::LeggedCheaterController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The basic legged controller with cheat state estimator
+        </description>
+    </class>
+
+    <!-- Hexapod Controller -->
+    <class name="legged/HexapodController" type="legged::HexapodController"
+        base_class_type="controller_interface::ControllerBase">
+        <description>
+            The basic legged controller.
+        </description>
+    </class>
+
+    <class name="legged/HexapodCheaterController" type="legged::HexapodCheaterController"
            base_class_type="controller_interface::ControllerBase">
         <description>
             The basic legged controller with cheat state estimator
