@@ -114,7 +114,7 @@ namespace legged
 
     // Command
     ros::Publisher jointCmdPub_;
-    legged_hexapod_hw::JointCmd jointCmdMsg_;
+    // legged_hexapod_hw::JointCmd jointCmdMsg_; // FIXME: This cause core dump
   };
 
 } // namespace legged

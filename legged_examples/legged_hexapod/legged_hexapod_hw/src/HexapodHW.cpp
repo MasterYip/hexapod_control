@@ -32,6 +32,7 @@ namespace legged
 
         jointStateSub_ = root_nh.subscribe("/hexapod/joint_state_fdb", 1, &HexapodHW::jointStateCallback, this);
         imuSub_ = root_nh.subscribe("/trunk_imu", 1, &HexapodHW::imuCallback, this);
+        jointCmdPub_ = root_nh.advertise<legged_hexapod_hw::JointCmd>("/hexapod/joint_cmd", 1);
         return true;
     }
 
@@ -49,81 +50,62 @@ namespace legged
 
     void HexapodHW::read(const ros::Time &time, const ros::Duration & /*period*/)
     {
-        // if (jointStateReceived_)
-        // {
-        //     for (size_t i = 0; i < 18; ++i)
-        //     {
-        //         jointData_[i].pos_ = jointStateMsg_.position[i];
-        //         jointData_[i].vel_ = jointStateMsg_.velocity[i];
-        //         jointData_[i].tau_ = jointStateMsg_.effort[i];
-        //     }
-        // }
+        if (jointStateReceived_)
+        {
+            for (size_t i = 0; i < 18; ++i)
+            {
+                jointData_[i].pos_ = jointStateMsg_.position[i];
+                jointData_[i].vel_ = jointStateMsg_.velocity[i];
+                jointData_[i].tau_ = jointStateMsg_.effort[i];
+            }
+        }
 
-        // if (imuReceived_)
-        // {
-        //     imuData_.ori_[0] = imuMsg_.orientation.x;
-        //     imuData_.ori_[1] = imuMsg_.orientation.y;
-        //     imuData_.ori_[2] = imuMsg_.orientation.z;
-        //     imuData_.ori_[3] = imuMsg_.orientation.w;
-        //     imuData_.angularVel_[0] = imuMsg_.angular_velocity.x;
-        //     imuData_.angularVel_[1] = imuMsg_.angular_velocity.y;
-        //     imuData_.angularVel_[2] = imuMsg_.angular_velocity.z;
-        //     imuData_.linearAcc_[0] = imuMsg_.linear_acceleration.x;
-        //     imuData_.linearAcc_[1] = imuMsg_.linear_acceleration.y;
-        //     imuData_.linearAcc_[2] = imuMsg_.linear_acceleration.z;
-        // }
+        if (imuReceived_)
+        {
+            imuData_.ori_[0] = imuMsg_.orientation.x;
+            imuData_.ori_[1] = imuMsg_.orientation.y;
+            imuData_.ori_[2] = imuMsg_.orientation.z;
+            imuData_.ori_[3] = imuMsg_.orientation.w;
+            imuData_.angularVel_[0] = imuMsg_.angular_velocity.x;
+            imuData_.angularVel_[1] = imuMsg_.angular_velocity.y;
+            imuData_.angularVel_[2] = imuMsg_.angular_velocity.z;
+            imuData_.linearAcc_[0] = imuMsg_.linear_acceleration.x;
+            imuData_.linearAcc_[1] = imuMsg_.linear_acceleration.y;
+            imuData_.linearAcc_[2] = imuMsg_.linear_acceleration.z;
+        }
         // TODO: Update Contact State
-        // Eigen::Vector3d legtorque;
-        // for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i)
-        // {
-        //     legtorque << jointData_[i * 3].tau_, jointData_[i * 3 + 1].tau_, jointData_[i * 3 + 2].tau_;
-        //     contactState_[i] = legtorque.norm() > contactThreshold_;
-        // }
+        Eigen::Vector3d legtorque;
+        for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i)
+        {
+            legtorque << jointData_[i * 3].tau_, jointData_[i * 3 + 1].tau_, jointData_[i * 3 + 2].tau_;
+            contactState_[i] = legtorque.norm() > contactThreshold_;
+        }
 
-        // // Set feedforward and velocity cmd to zero to avoid for safety when not controller setCommand
-        // std::vector<std::string> names = hybridJointInterface_.getNames();
-        // for (const auto &name : names)
-        // {
-        //     HybridJointHandle handle = hybridJointInterface_.getHandle(name);
-        //     handle.setFeedforward(0.);
-        //     handle.setVelocityDesired(0.);
-        //     handle.setKd(3.);
-        // }
+        // Set feedforward and velocity cmd to zero to avoid for safety when not controller setCommand
+        std::vector<std::string> names = hybridJointInterface_.getNames();
+        for (const auto &name : names)
+        {
+            HybridJointHandle handle = hybridJointInterface_.getHandle(name);
+            handle.setFeedforward(0.);
+            handle.setVelocityDesired(0.);
+            handle.setKd(3.);
+        }
     }
 
     void HexapodHW::write(const ros::Time & /*time*/, const ros::Duration & /*period*/)
     {
-        // jointCmdMsg_.kp.resize(18);
-        // jointCmdMsg_.kd.resize(18);
-        // jointCmdMsg_.position.resize(18);
-        // jointCmdMsg_.velocity.resize(18);
-        // jointCmdMsg_.torque.resize(18);
-        // for (int i = 0; i < 18; ++i)
-        // {
-        //     jointCmdMsg_.position[i] = jointData_[i].posDes_;
-        //     jointCmdMsg_.velocity[i] = jointData_[i].velDes_;
-        //     jointCmdMsg_.torque[i] = jointData_[i].ff_;
-        //     jointCmdMsg_.kp[i] = jointData_[i].kp_;
-        //     jointCmdMsg_.kd[i] = jointData_[i].kd_;
-        // }
-        jointCmdMsg_.kp.clear();
-        jointCmdMsg_.kd.clear();
-        jointCmdMsg_.position.clear();
-        jointCmdMsg_.velocity.clear();
-        jointCmdMsg_.torque.clear();
+        legged_hexapod_hw::JointCmd jointCmdMsg;
         for (int i = 0; i < 18; ++i)
         {
-            jointCmdMsg_.position.push_back(jointData_[i].posDes_);
-            jointCmdMsg_.velocity.push_back(jointData_[i].velDes_);
-            // jointCmdMsg_.torque.push_back(jointData_[i].ff_);
-            jointCmdMsg_.kp.push_back(jointData_[i].kp_);
-            jointCmdMsg_.kd.push_back(jointData_[i].kd_);
+            jointCmdMsg.position.push_back(jointData_[i].posDes_);
+            jointCmdMsg.velocity.push_back(jointData_[i].velDes_);
+            jointCmdMsg.torque.push_back(jointData_[i].ff_);
+            jointCmdMsg.kp.push_back(jointData_[i].kp_);
+            jointCmdMsg.kd.push_back(jointData_[i].kd_);
         }
-        jointCmdMsg_.torque.push_back(0);
-        ROS_ERROR("jointCmdMsg_.torque.size() = %d\n", jointCmdMsg_.torque.size());
 
-        // jointCmdMsg_.header.stamp = ros::Time::now();
-        // jointCmdPub_.publish(jointCmdMsg_);
+        jointCmdMsg.header.stamp = ros::Time::now();
+        jointCmdPub_.publish(jointCmdMsg);
     }
 
     bool HexapodHW::setupJoints()
