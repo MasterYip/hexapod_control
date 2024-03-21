@@ -6,3 +6,7 @@ controllers:
     type: legged/LeggedController
   legged_cheater_controller:
     type: legged/LeggedCheaterController
+  hexapod_controller:
+    type: legged/HexapodController
+  hexapod_cheater_controller:
+    type: legged/HexapodCheaterController

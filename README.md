@@ -89,6 +89,7 @@ catkin build legged_unitree_hw
 
 ```
 export ROBOT_TYPE=a1
+export ROBOT_TYPE=elspider_air
 ```
 
 2. Run the simulation:
@@ -119,6 +120,15 @@ strictness: 0
 start_asap: false
 timeout: 0.0" 
 ```
+hexapod controller
+```
+rosservice call /controller_manager/switch_controller "start_controllers: ['controllers/hexapod_controller']                   
+stop_controllers: ['']
+strictness: 0
+start_asap: false
+timeout: 0.0" 
+```
+
 
 Or, you can start the controller using `rqt_controller_manager` GUI:
 
