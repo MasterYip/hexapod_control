@@ -102,6 +102,7 @@ Or on the robot hardware:
 
 ```
 roslaunch legged_unitree_hw legged_unitree_hw.launch
+roslaunch legged_hexapod_hw legged_hexapod_hw.launch
 ```
 
 3. Load the controller:

@@ -121,7 +121,7 @@ namespace legged
   {
     // State Estimate
     updateStateEstimation(time, period);
-
+    ROS_ERROR("update HexapodController");
     // Update the current state of the system
     // mpcMrtInterface_->setCurrentObservation(currentObservation_);
 
@@ -130,6 +130,8 @@ namespace legged
 
     // Evaluate the current policy
     vector_t optimizedState, optimizedInput;
+    optimizedState.resize(leggedInterface_->getCentroidalModelInfo().stateDim);
+    optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
     size_t plannedMode = 0;  // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
