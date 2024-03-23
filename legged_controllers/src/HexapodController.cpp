@@ -139,11 +139,12 @@ namespace legged
     // currentObservation_.input = optimizedInput;
 
     // TODO: use heuristics to generate the desired state and input
-    wbcTimer_.startTimer();
-    vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
-    wbcTimer_.endTimer();
+    // wbcTimer_.startTimer();
+    // vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
+    // wbcTimer_.endTimer();
 
-    vector_t torque = x.tail(12);
+    // vector_t torque = x.tail(12);
+    vector_t torque = vector_t::Zero(leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
 
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());

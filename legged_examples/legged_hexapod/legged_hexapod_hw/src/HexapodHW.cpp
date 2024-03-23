@@ -147,4 +147,23 @@ namespace legged
         return true;
     }
 
+    // Debug
+
+    void HexapodHW::printIMU()
+    {
+        ROS_WARN("IMU Data:");
+        ROS_WARN("Orientation: %f, %f, %f, %f", imuData_.ori_[0], imuData_.ori_[1], imuData_.ori_[2], imuData_.ori_[3]);
+        ROS_WARN("Angular Velocity: %f, %f, %f", imuData_.angularVel_[0], imuData_.angularVel_[1], imuData_.angularVel_[2]);
+        ROS_WARN("Linear Acceleration: %f, %f, %f", imuData_.linearAcc_[0], imuData_.linearAcc_[1], imuData_.linearAcc_[2]);
+    }
+
+    void HexapodHW::printJointState()
+    {
+        ROS_WARN("Joint State:");
+        for (int i = 0; i < 18; i++)
+        {
+            ROS_WARN("Joint %d: %f, %f, %f", i, jointData_[i].pos_, jointData_[i].vel_, jointData_[i].tau_);
+        }
+    }
+
 } // namespace legged

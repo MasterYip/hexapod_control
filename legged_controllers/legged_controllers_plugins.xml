@@ -29,4 +29,12 @@
             The basic legged controller with cheat state estimator
         </description>
     </class>
+
+    <class name="legged/TestController" type="legged::TestController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+            The test controller
+        </description>
+    </class>
+
 </library>

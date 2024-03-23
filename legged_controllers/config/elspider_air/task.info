@@ -159,7 +159,7 @@ initialState
    (10,0) 0.0     ; theta_base_y
    (11,0) 0.0     ; theta_base_x
 
-   ;; Leg Joint Positions: [LF, LH, RF, RH] ;;
+   ;; Leg Joint Positions: [LF, LM, LH, RF, RM, RH] ;;
    (12,0) 0.0   ; LF_HAA
    (13,0) 0.0   ; LF_HFE
    (14,0) 0.0   ; LF_KFE

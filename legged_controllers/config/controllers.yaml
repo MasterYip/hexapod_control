@@ -10,3 +10,5 @@ controllers:
     type: legged/HexapodController
   hexapod_cheater_controller:
     type: legged/HexapodCheaterController
+  test_controller:
+    type: legged/TestController

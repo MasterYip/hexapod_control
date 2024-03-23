@@ -95,6 +95,10 @@ namespace legged
 
     bool setupContactSensor(ros::NodeHandle &nh);
 
+    // Debug
+    void printIMU();
+    void printJointState();
+
     UnitreeMotorData jointData_[18]{}; // NOLINT(modernize-avoid-c-arrays)
     UnitreeImuData imuData_{};
     bool contactState_[6]{}; // NOLINT(modernize-avoid-c-arrays)

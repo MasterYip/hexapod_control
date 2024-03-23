@@ -55,6 +55,7 @@ link_directories(
 add_library(${PROJECT_NAME}
         src/LeggedController.cpp
         src/HexapodController.cpp
+        src/TestController.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}
