@@ -32,7 +32,7 @@ namespace legged
 
         jointStateSub_ = root_nh.subscribe("/hexapod/joint_state_fdb", 1, &HexapodHW::jointStateCallback, this);
         imuSub_ = root_nh.subscribe("/trunk_imu", 1, &HexapodHW::imuCallback, this);
-        jointCmdPub_ = root_nh.advertise<legged_hexapod_hw::JointCmd>("/hexapod/joint_cmd", 1);
+        jointCmdPub_ = root_nh.advertise<legged_hexapod_hw::JointCmd>("/hexapod/hlc/joint_cmd", 1);
         return true;
     }
 

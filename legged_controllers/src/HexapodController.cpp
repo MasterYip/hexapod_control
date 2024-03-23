@@ -125,9 +125,8 @@ namespace legged
 
   void HexapodController::update(const ros::Time &time, const ros::Duration &period)
   {
-    // // State Estimate
+    // State Estimate
     // updateStateEstimation(time, period);
-    // ROS_ERROR("update HexapodController");
     // Update the current state of the system
     // mpcMrtInterface_->setCurrentObservation(currentObservation_);
 
