@@ -55,19 +55,23 @@ namespace legged
     // setupMrt();
 
     // Visualization
-    ros::NodeHandle nh;
-    CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
-    eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), pinocchioMapping,
-                                                                        leggedInterface_->modelSettings().contactNames3DoF);
-    robotVisualizer_ = std::make_shared<LeggedRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
-                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
-    selfCollisionVisualization_.reset(new LeggedSelfCollisionVisualization(leggedInterface_->getPinocchioInterface(),
-                                                                           leggedInterface_->getGeometryInterface(), pinocchioMapping, nh));
+    // ros::NodeHandle nh;
+    // CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
+    // eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), pinocchioMapping,
+    //                                                                     leggedInterface_->modelSettings().contactNames3DoF);
+    // robotVisualizer_ = std::make_shared<LeggedRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
+    //                                                            leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
+    // selfCollisionVisualization_.reset(new LeggedSelfCollisionVisualization(leggedInterface_->getPinocchioInterface(),
+    //                                                                        leggedInterface_->getGeometryInterface(), pinocchioMapping, nh));
 
     // Hardware interface
     auto *hybridJointInterface = robot_hw->get<HybridJointInterface>();
-    std::vector<std::string> joint_names{"LF_HAA", "LF_HFE", "LF_KFE", "LH_HAA", "LH_HFE", "LH_KFE",
-                                         "RF_HAA", "RF_HFE", "RF_KFE", "RH_HAA", "RH_HFE", "RH_KFE"};
+    std::vector<std::string> joint_names{"RF_HAA", "RF_HFE", "RF_KFE",
+                                         "RM_HAA", "RM_HFE", "RM_KFE",
+                                         "RB_HAA", "RB_HFE", "RB_KFE",
+                                         "LF_HAA", "LF_HFE", "LF_KFE",
+                                         "LM_HAA", "LM_HFE", "LM_KFE",
+                                         "LB_HAA", "LB_HFE", "LB_KFE"};
     for (const auto &joint_name : joint_names)
     {
       hybridJointHandles_.push_back(hybridJointInterface->getHandle(joint_name));
@@ -80,48 +84,50 @@ namespace legged
     imuSensorHandle_ = robot_hw->get<hardware_interface::ImuSensorInterface>()->getHandle("base_imu");
 
     // State estimation
-    setupStateEstimate(taskFile, verbose);
+    // setupStateEstimate(taskFile, verbose);
 
-    // Whole body control
-    wbc_ = std::make_shared<WeightedWbcSimple>(leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),
-                                               *eeKinematicsPtr_);
-    wbc_->loadTasksSetting(taskFile, verbose);
+    // // Whole body control
+    // wbc_ = std::make_shared<WeightedWbcSimple>(leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),
+    //                                            *eeKinematicsPtr_);
+    // wbc_->loadTasksSetting(taskFile, verbose);
 
     // Safety Checker
-    safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
+    // safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
 
+    ROS_WARN("HexapodController initialized.");
     return true;
   }
 
   void HexapodController::starting(const ros::Time &time)
   {
-    // Initial state
-    currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
-    updateStateEstimation(time, ros::Duration(0.002));
-    currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
-    currentObservation_.mode = ModeNumber::STANCE;
+    // // Initial state
+    // currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
+    // updateStateEstimation(time, ros::Duration(0.002));
+    // currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
+    // currentObservation_.mode = ModeNumber::STANCE;
 
-    TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
+    // TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
 
-    // Set the first observation and command and wait for optimization to finish
-    mpcMrtInterface_->setCurrentObservation(currentObservation_);
-    mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
-    ROS_INFO_STREAM("Waiting for the initial policy ...");
-    while (!mpcMrtInterface_->initialPolicyReceived() && ros::ok())
-    {
-      mpcMrtInterface_->advanceMpc();
-      ros::WallRate(leggedInterface_->mpcSettings().mrtDesiredFrequency_).sleep();
-    }
-    ROS_INFO_STREAM("Initial policy has been received.");
+    // // Set the first observation and command and wait for optimization to finish
+    // mpcMrtInterface_->setCurrentObservation(currentObservation_);
+    // mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
+    // ROS_INFO_STREAM("Waiting for the initial policy ...");
+    // while (!mpcMrtInterface_->initialPolicyReceived() && ros::ok())
+    // {
+    //   mpcMrtInterface_->advanceMpc();
+    //   ros::WallRate(leggedInterface_->mpcSettings().mrtDesiredFrequency_).sleep();
+    // }
+    // ROS_INFO_STREAM("Initial policy has been received.");
 
-    mpcRunning_ = true;
+    // mpcRunning_ = true;
+    ROS_WARN("HexapodController started.");
   }
 
   void HexapodController::update(const ros::Time &time, const ros::Duration &period)
   {
-    // State Estimate
-    updateStateEstimation(time, period);
-    ROS_ERROR("update HexapodController");
+    // // State Estimate
+    // updateStateEstimation(time, period);
+    // ROS_ERROR("update HexapodController");
     // Update the current state of the system
     // mpcMrtInterface_->setCurrentObservation(currentObservation_);
 
@@ -132,7 +138,7 @@ namespace legged
     vector_t optimizedState, optimizedInput;
     optimizedState.resize(leggedInterface_->getCentroidalModelInfo().stateDim);
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
-    size_t plannedMode = 0;  // The mode that is active at the time the policy is evaluated at.
+    size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
     // Whole body control (parameter definition can be found in the task file)
@@ -149,24 +155,25 @@ namespace legged
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
 
-    // Safety check, if failed, stop the controller
-    if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput))
-    {
-      ROS_ERROR_STREAM("[Hexapod Controller] Safety check failed, stopping the controller.");
-      stopRequest(time);
-    }
+    // // Safety check, if failed, stop the controller
+    // if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput))
+    // {
+    //   ROS_ERROR_STREAM("[Hexapod Controller] Safety check failed, stopping the controller.");
+    //   stopRequest(time);
+    // }
 
     for (size_t j = 0; j < leggedInterface_->getCentroidalModelInfo().actuatedDofNum; ++j)
     {
       hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0, 3, torque(j));
     }
 
-    // Visualization
-    robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
-    selfCollisionVisualization_->update(currentObservation_);
+    // // Visualization
+    // robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
+    // selfCollisionVisualization_->update(currentObservation_);
 
-    // Publish the observation. Only needed for the command interface
-    observationPublisher_.publish(ros_msg_conversions::createObservationMsg(currentObservation_));
+    // // Publish the observation. Only needed for the command interface
+    // observationPublisher_.publish(ros_msg_conversions::createObservationMsg(currentObservation_));
+    ROS_WARN("HexapodController updated.");
   }
 
   void HexapodController::updateStateEstimation(const ros::Time &time, const ros::Duration &period)
@@ -235,6 +242,14 @@ namespace legged
                                                bool verbose)
   {
     leggedInterface_ = std::make_shared<LeggedInterface>(taskFile, urdfFile, referenceFile);
+    leggedInterface_->modelSettings().jointNames = {"RF_HAA", "RF_HFE", "RF_KFE",
+                                                   "RM_HAA", "RM_HFE", "RM_KFE",
+                                                   "RB_HAA", "RB_HFE", "RB_KFE",
+                                                   "LF_HAA", "LF_HFE", "LF_KFE",
+                                                   "LM_HAA", "LM_HFE", "LM_KFE",
+                                                   "LB_HAA", "LB_HFE", "LB_KFE"};
+    leggedInterface_->modelSettings().contactNames3DoF = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
+                                                         "LF_FOOT", "LM_FOOT", "LB_FOOT"};
     leggedInterface_->setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
   }
 

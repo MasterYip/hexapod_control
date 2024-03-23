@@ -39,19 +39,23 @@ namespace legged
 {
   bool TestController::init(hardware_interface::RobotHW *robot_hw, ros::NodeHandle &controller_nh)
   {
+    ROS_FATAL("TestController::init");
     return true;
   }
 
   void TestController::starting(const ros::Time &time)
   {
+    ROS_FATAL("TestController::starting");
   }
 
   void TestController::update(const ros::Time &time, const ros::Duration &period)
   {
+    ROS_FATAL("TestController::update");
   }
 
   TestController::~TestController()
   {
+    ROS_FATAL("TestController::~TestController");
   }
 
 } // namespace legged

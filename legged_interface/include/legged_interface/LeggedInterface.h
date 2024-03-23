@@ -39,7 +39,7 @@ class LeggedInterface : public RobotInterface {
 
   const OptimalControlProblem& getOptimalControlProblem() const override { return *problemPtr_; }
 
-  const ModelSettings& modelSettings() const { return modelSettings_; }
+  ModelSettings& modelSettings() { return modelSettings_; } // remove const to modify joint names & contact names
   const ddp::Settings& ddpSettings() const { return ddpSettings_; }
   const mpc::Settings& mpcSettings() const { return mpcSettings_; }
   const rollout::Settings& rolloutSettings() const { return rolloutSettings_; }
