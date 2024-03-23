@@ -287,14 +287,10 @@ selfCollision
   ; TODO Self Collision pairs
   collisionLinkPairs
   {
-    [0] "LF_calf, RF_calf"
-    [1] "LH_calf, RH_calf"
-    [2] "LF_calf, LH_calf"
-    [3] "RF_calf, RH_calf"
-    [4] "LF_FOOT, RF_FOOT"
-    [5] "LH_FOOT, RH_FOOT"
-    [6] "LF_FOOT, LH_FOOT"
-    [7] "RF_FOOT, RH_FOOT"
+    [0] "LF_FOOT, RF_FOOT"
+    [1] "LB_FOOT, RB_FOOT"
+    [2] "LF_FOOT, LB_FOOT"
+    [3] "RF_FOOT, RB_FOOT"
   }
 
   minimumDistance  0.05

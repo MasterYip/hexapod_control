@@ -55,14 +55,14 @@ namespace legged
     // setupMrt();
 
     // Visualization
-    // ros::NodeHandle nh;
-    // CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
-    // eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), pinocchioMapping,
-    //                                                                     leggedInterface_->modelSettings().contactNames3DoF);
-    // robotVisualizer_ = std::make_shared<LeggedRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
-    //                                                            leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
-    // selfCollisionVisualization_.reset(new LeggedSelfCollisionVisualization(leggedInterface_->getPinocchioInterface(),
-    //                                                                        leggedInterface_->getGeometryInterface(), pinocchioMapping, nh));
+    ros::NodeHandle nh;
+    CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
+    eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), pinocchioMapping,
+                                                                        leggedInterface_->modelSettings().contactNames3DoF);
+    robotVisualizer_ = std::make_shared<LeggedRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
+                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
+    selfCollisionVisualization_.reset(new LeggedSelfCollisionVisualization(leggedInterface_->getPinocchioInterface(),
+                                                                           leggedInterface_->getGeometryInterface(), pinocchioMapping, nh));
 
     // Hardware interface
     auto *hybridJointInterface = robot_hw->get<HybridJointInterface>();
@@ -84,15 +84,15 @@ namespace legged
     imuSensorHandle_ = robot_hw->get<hardware_interface::ImuSensorInterface>()->getHandle("base_imu");
 
     // State estimation
-    // setupStateEstimate(taskFile, verbose);
+    setupStateEstimate(taskFile, verbose);
 
-    // // Whole body control
-    // wbc_ = std::make_shared<WeightedWbcSimple>(leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),
-    //                                            *eeKinematicsPtr_);
-    // wbc_->loadTasksSetting(taskFile, verbose);
+    // Whole body control
+    wbc_ = std::make_shared<WeightedWbcSimple>(leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),
+                                               *eeKinematicsPtr_);
+    wbc_->loadTasksSetting(taskFile, verbose);
 
     // Safety Checker
-    // safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
+    safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
 
     ROS_WARN("HexapodController initialized.");
     return true;
