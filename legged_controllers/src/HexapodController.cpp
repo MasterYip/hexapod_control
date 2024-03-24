@@ -150,9 +150,9 @@ namespace legged
     currentObservation_.input = optimizedInput;
 
     // TODO: use heuristics to generate the desired state and input
-    // wbcTimer_.startTimer();
-    // vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
-    // wbcTimer_.endTimer();
+    wbcTimer_.startTimer();
+    vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
+    wbcTimer_.endTimer();
 
     // vector_t torque = x.tail(12);
     vector_t torque = vector_t::Zero(leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
@@ -220,9 +220,6 @@ namespace legged
     measuredRbdState_ = stateEstimate_->update(time, period);
     currentObservation_.time += period.toSec();
     scalar_t yawLast = currentObservation_.state(9);
-    // FIXME: this caused program crashing
-    std::cerr << "RBDState n:"<< measuredRbdState_.size() << std::endl;
-    // measuredRbdState_: 24+24 q_gen + v_gen
     currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
     currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));
     currentObservation_.mode = stateEstimate_->getMode();
