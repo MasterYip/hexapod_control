@@ -50,9 +50,9 @@ namespace legged
     loadData::loadCppDataType(taskFile, "legged_robot_interface.verbose", verbose);
 
     setupLeggedInterface(taskFile, urdfFile, referenceFile, verbose);
-    // FIXME: MPC not enabled
-    // setupMpc();
-    // setupMrt();
+    // FIXME: MPC should not enabled
+    setupMpc();
+    setupMrt();
 
     // Visualization
     ros::NodeHandle nh;
@@ -95,18 +95,24 @@ namespace legged
     safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
 
     ROS_WARN("HexapodController initialized.");
+    ROS_WARN("State Num: %d", leggedInterface_->getCentroidalModelInfo().stateDim);
+    ROS_WARN("Input Num: %d", leggedInterface_->getCentroidalModelInfo().inputDim);
+    ROS_WARN("Actuated Dof Num: %d", leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
+    ROS_WARN("Generalized Dof Num: %d", leggedInterface_->getCentroidalModelInfo().generalizedCoordinatesNum);
+    ROS_WARN("3DOF Contact Num: %d", leggedInterface_->getCentroidalModelInfo().numThreeDofContacts);
+
     return true;
   }
 
   void HexapodController::starting(const ros::Time &time)
   {
-    // // Initial state
-    // currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
-    // updateStateEstimation(time, ros::Duration(0.002));
-    // currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
-    // currentObservation_.mode = ModeNumber::STANCE;
+    // Initial state
+    currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
+    updateStateEstimation(time, ros::Duration(0.002));
+    currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
+    currentObservation_.mode = ModeNumber::STANCE;
 
-    // TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
+    TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
 
     // // Set the first observation and command and wait for optimization to finish
     // mpcMrtInterface_->setCurrentObservation(currentObservation_);
@@ -126,7 +132,7 @@ namespace legged
   void HexapodController::update(const ros::Time &time, const ros::Duration &period)
   {
     // State Estimate
-    // updateStateEstimation(time, period);
+    updateStateEstimation(time, period);
     // Update the current state of the system
     // mpcMrtInterface_->setCurrentObservation(currentObservation_);
 
@@ -141,7 +147,7 @@ namespace legged
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
     // Whole body control (parameter definition can be found in the task file)
-    // currentObservation_.input = optimizedInput;
+    currentObservation_.input = optimizedInput;
 
     // TODO: use heuristics to generate the desired state and input
     // wbcTimer_.startTimer();
@@ -208,13 +214,15 @@ namespace legged
       angularVelCovariance(i) = imuSensorHandle_.getAngularVelocityCovariance()[i];
       linearAccelCovariance(i) = imuSensorHandle_.getLinearAccelerationCovariance()[i];
     }
-
     stateEstimate_->updateJointStates(jointPos, jointVel);
     stateEstimate_->updateContact(contactFlag);
     stateEstimate_->updateImu(quat, angularVel, linearAccel, orientationCovariance, angularVelCovariance, linearAccelCovariance);
     measuredRbdState_ = stateEstimate_->update(time, period);
     currentObservation_.time += period.toSec();
     scalar_t yawLast = currentObservation_.state(9);
+    // FIXME: this caused program crashing
+    std::cerr << "RBDState n:"<< measuredRbdState_.size() << std::endl;
+    // measuredRbdState_: 24+24 q_gen + v_gen
     currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
     currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));
     currentObservation_.mode = stateEstimate_->getMode();
@@ -242,13 +250,13 @@ namespace legged
   {
     leggedInterface_ = std::make_shared<LeggedInterface>(taskFile, urdfFile, referenceFile);
     leggedInterface_->modelSettings().jointNames = {"RF_HAA", "RF_HFE", "RF_KFE",
-                                                   "RM_HAA", "RM_HFE", "RM_KFE",
-                                                   "RB_HAA", "RB_HFE", "RB_KFE",
-                                                   "LF_HAA", "LF_HFE", "LF_KFE",
-                                                   "LM_HAA", "LM_HFE", "LM_KFE",
-                                                   "LB_HAA", "LB_HFE", "LB_KFE"};
+                                                    "RM_HAA", "RM_HFE", "RM_KFE",
+                                                    "RB_HAA", "RB_HFE", "RB_KFE",
+                                                    "LF_HAA", "LF_HFE", "LF_KFE",
+                                                    "LM_HAA", "LM_HFE", "LM_KFE",
+                                                    "LB_HAA", "LB_HFE", "LB_KFE"};
     leggedInterface_->modelSettings().contactNames3DoF = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
-                                                         "LF_FOOT", "LM_FOOT", "LB_FOOT"};
+                                                          "LF_FOOT", "LM_FOOT", "LB_FOOT"};
     leggedInterface_->setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
   }
 
