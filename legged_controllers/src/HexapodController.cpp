@@ -143,6 +143,8 @@ namespace legged
     vector_t optimizedState, optimizedInput;
     optimizedState.resize(leggedInterface_->getCentroidalModelInfo().stateDim);
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
+    optimizedState.setZero();
+    optimizedInput.setZero();
     size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
@@ -150,6 +152,10 @@ namespace legged
     currentObservation_.input = optimizedInput;
 
     // TODO: use heuristics to generate the desired state and input
+    std::cerr << "Optimized state: " << optimizedState.transpose() << std::endl;
+    std::cerr << "Optimized input: " << optimizedInput.transpose() << std::endl;
+    std::cerr << "Measured RBD state: " << std::setprecision(3) << measuredRbdState_.transpose() << std::endl;
+
     wbcTimer_.startTimer();
     vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
     wbcTimer_.endTimer();

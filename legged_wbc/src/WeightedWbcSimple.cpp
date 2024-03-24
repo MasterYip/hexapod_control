@@ -19,14 +19,38 @@
 
 namespace legged {
 
+inline hex_contact_flag_t modeNumber2StanceLegHex(const size_t& modeNumber) {
+  hex_contact_flag_t stanceLegs;  // {LF, RF, LM, RM, LH, RH}
+  size_t mode = modeNumber;
+  // leg index xx543210b
+  for (size_t i = 0; i < 6; i++) {
+    stanceLegs[i] = mode & 1;
+    mode >>= 1;
+  }
+  return stanceLegs;
+}
+
 vector_t WeightedWbcSimple::update(const vector_t& stateDesired, const vector_t& inputDesired, const vector_t& rbdStateMeasured, size_t mode,
                              scalar_t period) {
-  WbcBase::update(stateDesired, inputDesired, rbdStateMeasured, mode, period);
+  // WbcBase::update(stateDesired, inputDesired, rbdStateMeasured, mode, period);
 
+  contactFlagHex_ = modeNumber2StanceLegHex(mode);
+  numContacts_ = 0;
+  for (bool flag : contactFlagHex_)
+  {
+    if (flag)
+    {
+      numContacts_++;
+    }
+  }
+  updateMeasured(rbdStateMeasured);
+  updateDesired(stateDesired, inputDesired);
+
+  std::cerr << "WeightedWbcSimple::update" << std::endl;
   // Constraints
   Task constraints = formulateConstraints();
   size_t numConstraints = constraints.b_.size() + constraints.f_.size();
-
+  std::cerr << "Formulate constraints" << std::endl;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> A(numConstraints, getNumDecisionVars());
   vector_t lbA(numConstraints), ubA(numConstraints);  // clang-format off
   A << constraints.a_,
@@ -36,12 +60,12 @@ vector_t WeightedWbcSimple::update(const vector_t& stateDesired, const vector_t&
          -qpOASES::INFTY * vector_t::Ones(constraints.f_.size()); // Inequality constraints
   ubA << constraints.b_,
          constraints.f_;  // clang-format on
-
+  std::cerr << "Load constraints" << std::endl;
   // Cost
   Task weighedTask = formulateWeightedTasks(stateDesired, inputDesired, period);
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> H = weighedTask.a_.transpose() * weighedTask.a_;
   vector_t g = -weighedTask.a_.transpose() * weighedTask.b_;
-
+  std::cerr << "Load cost" << std::endl;
   // Solve
   auto qpProblem = qpOASES::QProblem(getNumDecisionVars(), numConstraints);
   qpOASES::Options options;
@@ -50,7 +74,7 @@ vector_t WeightedWbcSimple::update(const vector_t& stateDesired, const vector_t&
   options.enableEqualities = qpOASES::BT_TRUE;
   qpProblem.setOptions(options);
   int nWsr = 20;
-
+  std::cerr << "Init QP" << std::endl;
   qpProblem.init(H.data(), g.data(), A.data(), nullptr, nullptr, lbA.data(), ubA.data(), nWsr);
   vector_t qpSol(getNumDecisionVars());
 
@@ -59,6 +83,7 @@ vector_t WeightedWbcSimple::update(const vector_t& stateDesired, const vector_t&
 }
 
 Task WeightedWbcSimple::formulateConstraints() {
+  std::cerr << "WeightedWbcSimple::formulateConstraints" << std::endl;
   return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() + formulateNoContactMotionTask();
 }
 
