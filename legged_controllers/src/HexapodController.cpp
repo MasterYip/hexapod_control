@@ -39,6 +39,9 @@ namespace legged
 {
   bool HexapodController::init(hardware_interface::RobotHW *robot_hw, ros::NodeHandle &controller_nh)
   {
+
+    ROS_WARN("HexapodController initializing ...");
+
     // Initialize OCS2
     std::string urdfFile;
     std::string taskFile;
@@ -46,10 +49,11 @@ namespace legged
     controller_nh.getParam("/urdfFile", urdfFile);
     controller_nh.getParam("/taskFile", taskFile);
     controller_nh.getParam("/referenceFile", referenceFile);
-    bool verbose = false;
+    bool verbose = true;
     loadData::loadCppDataType(taskFile, "legged_robot_interface.verbose", verbose);
 
     setupLeggedInterface(taskFile, urdfFile, referenceFile, verbose);
+
     // FIXME: MPC should not enabled
     setupMpc();
     setupMrt();
