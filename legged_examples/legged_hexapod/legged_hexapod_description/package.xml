@@ -12,5 +12,6 @@
     <exec_depend>xacro</exec_depend>
     <exec_depend>joint_state_publisher</exec_depend>
     <exec_depend>robot_state_publisher</exec_depend>
+    <exec_depend>hexapod_robot_assets</exec_depend>
 
 </package>

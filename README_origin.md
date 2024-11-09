@@ -5,12 +5,19 @@
 legged_control is an NMPC-WBC legged robot control stack and framework based
 on [OCS2](https://github.com/leggedrobotics/ocs2) and [ros-control](http://wiki.ros.org/ros_control).
 
+The advantage shows below:
+
+1. To the author's best knowledge, this framework is probably the best-performing open-source legged robot MPC control
+   framework;
+2. You can deploy this framework in your A1 robot within a few hours;
+3. Thanks to the ros-control interface, you can easily use this framework for your custom robot.
+
+I believe this framework can provide a high-performance and easy-to-use model-based baseline for the legged robot
+community.
+
+https://user-images.githubusercontent.com/21256355/192135828-8fa7d9bb-9b4d-41f9-907a-68d34e6809d8.mp4
 
 ## Installation
-
-### Hexapod Dep
-
-- hexapod_robot_assets
 
 ### Source code
 
@@ -60,7 +67,7 @@ its dependencies following the step below.
 Build the source code of `legged_control` by:
 
 ```
-catkin build legged_controllers legged_unitree_description legged_hexapod_description
+catkin build legged_controllers legged_unitree_description
 ```
 
 Build the simulation (**DO NOT** run on the onboard computer)
@@ -73,7 +80,7 @@ Build the hardware interface real robot. If you use your computer only for simul
 compile `legged_unitree_hw` (TODO: add a legged prefix to the package name)
 
 ```
-catkin build legged_unitree_hw legged_hexapod_hw
+catkin build legged_unitree_hw
 ```
 
 ## Quick Start
@@ -89,23 +96,19 @@ export ROBOT_TYPE=elspider_air
 
 ```
 roslaunch legged_unitree_description empty_world.launch
-#roslaunch legged_hexapod_description empty_world.launch (Do not run this command)
 ```
 
 Or on the robot hardware:
-
->**IMPORTANT**: Hexapod is controlled by `HexapodSoftware', therefore select `hardware` for both simulation and hardware.
 
 ```
 roslaunch legged_unitree_hw legged_unitree_hw.launch
 roslaunch legged_hexapod_hw legged_hexapod_hw.launch
 ```
 
-1. Load the controller:
+3. Load the controller:
 
 ```
 roslaunch legged_controllers load_controller.launch cheater:=false
-roslaunch legged_controllers load_hexcontroller.launch cheater:=false
 ```
 
 4. Start the `legged_controller` or `legged_cheater_controller`, **NOTE that you are not allowed to start
