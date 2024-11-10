@@ -31,7 +31,7 @@ namespace legged
   protected:
     virtual Task formulateConstraints();
     virtual Task formulateWeightedTasks(const vector_t &stateDesired, const vector_t &inputDesired, scalar_t period);
-
+    virtual Task formulateNoContactMotionTask();
   private:
     scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_;
     hex_contact_flag_t contactFlagHex_{}; // Hexapod

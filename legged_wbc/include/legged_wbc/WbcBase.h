@@ -14,6 +14,7 @@ namespace legged
 {
   using namespace ocs2;
   using namespace legged_robot;
+  // FIXME: for hexapod adaption
   using hex_contact_flag_t = std::array<bool, 6>;
   // Decision Variables: x = [\dot u^T, F^T, \tau^T]^T
   class WbcBase

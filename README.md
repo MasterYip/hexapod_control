@@ -147,7 +147,6 @@ rosrun rqt_controller_manager rqt_controller_manager
 
 ### BUG
 
-- Conflict with HexapodSoftware: CppAD so lib borke after the gazebo launched. 
 
 ### Note
 
