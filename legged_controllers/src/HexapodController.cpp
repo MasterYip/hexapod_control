@@ -110,7 +110,6 @@ namespace legged
     ROS_WARN("Generalized Dof Num: %d", leggedInterface_->getCentroidalModelInfo().generalizedCoordinatesNum);
     ROS_WARN("3DOF Contact Num: %d", leggedInterface_->getCentroidalModelInfo().numThreeDofContacts);
 
-
     return true;
   }
 
@@ -156,12 +155,19 @@ namespace legged
     optimizedState.setZero();
     optimizedInput.setZero();
     // Use nominal state to test WBC
+    // POS
+    optimizedState[6] = measuredRbdState_[0];
+    optimizedState[7] = measuredRbdState_[1];
     optimizedState[8] = 0.28;
-    // for (size_t i = 0; i < 6; ++i)
-    // {
-    //   optimizedState[12+i * 3+1] = 1;
-    //   optimizedState[12+i * 3+2] = 1;
-    // }
+    // RPY
+    optimizedState[9] = measuredRbdState_[3];
+    optimizedState[10] = measuredRbdState_[4];
+    optimizedState[11] = measuredRbdState_[5];
+    for (size_t i = 0; i < 6; ++i)
+    {
+      optimizedState[12 + i * 3 + 1] = 1;
+      optimizedState[12 + i * 3 + 2] = 1;
+    }
     for (size_t i = 0; i < 6; ++i)
     {
       optimizedInput[i * 3 + 2] = 5.0;
@@ -184,12 +190,11 @@ namespace legged
               << measuredRbdState_.segment(24, 6).transpose() << std::endl
               << "JVel: " << std::setprecision(3)
               << measuredRbdState_.segment(30, 18).transpose() << std::endl;
-    
+
     // publish measured
     std_msgs::Float64MultiArray msg;
     msg.data = std::vector<double>(measuredRbdState_.data(), measuredRbdState_.data() + measuredRbdState_.size());
     estimationPub_.publish(msg);
-
 
     wbcTimer_.startTimer();
     vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
@@ -201,6 +206,8 @@ namespace legged
 
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
+    std::cerr << "PosDes: " << posDes.transpose() << std::endl;
+    std::cerr << "VelDes: " << velDes.transpose() << std::endl;
 
     // // Safety check, if failed, stop the controller
     // if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput))
@@ -211,7 +218,9 @@ namespace legged
 
     for (size_t j = 0; j < leggedInterface_->getCentroidalModelInfo().actuatedDofNum; ++j)
     {
-      hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0, 3, torque(j));
+      // hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0, 3, torque(j));
+      hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 5, 3, torque(j));
+      // hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 20, 5, 0);
     }
 
     // // Visualization

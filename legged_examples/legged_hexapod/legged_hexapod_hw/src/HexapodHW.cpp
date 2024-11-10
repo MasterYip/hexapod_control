@@ -116,11 +116,13 @@ namespace legged
             jointCmdMsg.torque.push_back(jointData_[3*i].ff_);
             jointCmdMsg.kp.push_back(jointData_[3*i].kp_);
             jointCmdMsg.kd.push_back(jointData_[3*i].kd_);
+
             jointCmdMsg.position.push_back(-jointData_[3*i+1].posDes_ + M_PI / 2);
             jointCmdMsg.velocity.push_back(-jointData_[3*i+1].velDes_);
             jointCmdMsg.torque.push_back(-jointData_[3*i+1].ff_);
             jointCmdMsg.kp.push_back(jointData_[3*i+1].kp_);
             jointCmdMsg.kd.push_back(jointData_[3*i+1].kd_);
+            
             jointCmdMsg.position.push_back(jointData_[3*i+2].posDes_ - M_PI);
             jointCmdMsg.velocity.push_back(jointData_[3*i+2].velDes_);
             jointCmdMsg.torque.push_back(jointData_[3*i+2].ff_);
