@@ -150,7 +150,7 @@ namespace legged
     optimizedState.setZero();
     optimizedInput.setZero();
     // Use nominal state to test WBC
-    optimizedState[8] = 0.25;
+    optimizedState[8] = 0.28;
     // for (size_t i = 0; i < 6; ++i)
     // {
     //   optimizedState[12+i * 3+1] = 1;
@@ -158,7 +158,7 @@ namespace legged
     // }
     for (size_t i = 0; i < 6; ++i)
     {
-      optimizedInput[i * 3 + 2] = 50.0;
+      optimizedInput[i * 3 + 2] = 10.0;
     }
     size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);

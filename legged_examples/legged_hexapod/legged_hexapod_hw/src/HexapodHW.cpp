@@ -52,11 +52,18 @@ namespace legged
     {
         if (jointStateReceived_)
         {
-            for (size_t i = 0; i < 18; ++i)
+            for (size_t i = 0; i < 6; ++i)
             {
-                jointData_[i].pos_ = jointStateMsg_.position[i];
-                jointData_[i].vel_ = jointStateMsg_.velocity[i];
-                jointData_[i].tau_ = jointStateMsg_.effort[i];
+                // Convert from HexapodSoftware Style to URDF Style
+                jointData_[3*i].pos_ = jointStateMsg_.position[3*i];
+                jointData_[3*i].vel_ = jointStateMsg_.velocity[3*i];
+                jointData_[3*i].tau_ = jointStateMsg_.effort[3*i];
+                jointData_[3*i+1].pos_ = -jointStateMsg_.position[3*i+1] + M_PI / 2;
+                jointData_[3*i+1].vel_ = -jointStateMsg_.velocity[3*i+1];
+                jointData_[3*i+1].tau_ = jointStateMsg_.effort[3*i+1];
+                jointData_[3*i+2].pos_ = jointStateMsg_.position[3*i+2] + M_PI;
+                jointData_[3*i+2].vel_ = jointStateMsg_.velocity[3*i+2];
+                jointData_[3*i+2].tau_ = jointStateMsg_.effort[3*i+2];
             }
         }
 
@@ -95,13 +102,30 @@ namespace legged
     void HexapodHW::write(const ros::Time & /*time*/, const ros::Duration & /*period*/)
     {
         legged_hexapod_hw::JointCmd jointCmdMsg;
-        for (int i = 0; i < 18; ++i)
+        for (int i = 0; i < 6; ++i)
         {
-            jointCmdMsg.position.push_back(jointData_[i].posDes_);
-            jointCmdMsg.velocity.push_back(jointData_[i].velDes_);
-            jointCmdMsg.torque.push_back(jointData_[i].ff_);
-            jointCmdMsg.kp.push_back(jointData_[i].kp_);
-            jointCmdMsg.kd.push_back(jointData_[i].kd_);
+            // jointCmdMsg.position.push_back(jointData_[i].posDes_);
+            // jointCmdMsg.velocity.push_back(jointData_[i].velDes_);
+            // jointCmdMsg.torque.push_back(jointData_[i].ff_);
+            // jointCmdMsg.kp.push_back(jointData_[i].kp_);
+            // jointCmdMsg.kd.push_back(jointData_[i].kd_);
+
+            // Convert from URDF Style to HexapodSoftware Style
+            jointCmdMsg.position.push_back(jointData_[3*i].posDes_);
+            jointCmdMsg.velocity.push_back(jointData_[3*i].velDes_);
+            jointCmdMsg.torque.push_back(jointData_[3*i].ff_);
+            jointCmdMsg.kp.push_back(jointData_[3*i].kp_);
+            jointCmdMsg.kd.push_back(jointData_[3*i].kd_);
+            jointCmdMsg.position.push_back(-jointData_[3*i+1].posDes_ + M_PI / 2);
+            jointCmdMsg.velocity.push_back(-jointData_[3*i+1].velDes_);
+            jointCmdMsg.torque.push_back(jointData_[3*i+1].ff_);
+            jointCmdMsg.kp.push_back(jointData_[3*i+1].kp_);
+            jointCmdMsg.kd.push_back(jointData_[3*i+1].kd_);
+            jointCmdMsg.position.push_back(jointData_[3*i+2].posDes_ - M_PI);
+            jointCmdMsg.velocity.push_back(jointData_[3*i+2].velDes_);
+            jointCmdMsg.torque.push_back(jointData_[3*i+2].ff_);
+            jointCmdMsg.kp.push_back(jointData_[3*i+2].kp_);
+            jointCmdMsg.kd.push_back(jointData_[3*i+2].kd_);
         }
 
         jointCmdMsg.header.stamp = ros::Time::now();
