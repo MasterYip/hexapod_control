@@ -156,8 +156,8 @@ namespace legged
     optimizedInput.setZero();
     // Use nominal state to test WBC
     // POS
-    optimizedState[6] = measuredRbdState_[0];
-    optimizedState[7] = measuredRbdState_[1];
+    // optimizedState[6] = measuredRbdState_[0];
+    // optimizedState[7] = measuredRbdState_[1];
     optimizedState[8] = 0.28;
     // RPY
     optimizedState[9] = measuredRbdState_[3];
@@ -172,7 +172,8 @@ namespace legged
     {
       optimizedInput[i * 3 + 2] = 5.0;
     }
-    size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
+    // The mode that is active at the time the policy is evaluated at.
+    size_t plannedMode = 0b111111; // All legs are in stance mode
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
     // Whole body control (parameter definition can be found in the task file)
@@ -185,11 +186,11 @@ namespace legged
               << "Pbdy: " << std::setprecision(3)
               << measuredRbdState_.segment(0, 6).transpose() << std::endl
               << "JPos: " << std::setprecision(3)
-              << measuredRbdState_.segment(6, 18).transpose() << std::endl
-              << "Vbdy: " << std::setprecision(3)
-              << measuredRbdState_.segment(24, 6).transpose() << std::endl
-              << "JVel: " << std::setprecision(3)
-              << measuredRbdState_.segment(30, 18).transpose() << std::endl;
+              << measuredRbdState_.segment(6, 18).transpose() << std::endl;
+              // << "Vbdy: " << std::setprecision(3)
+              // << measuredRbdState_.segment(24, 6).transpose() << std::endl
+              // << "JVel: " << std::setprecision(3)
+              // << measuredRbdState_.segment(30, 18).transpose() << std::endl;
 
     // publish measured
     std_msgs::Float64MultiArray msg;
