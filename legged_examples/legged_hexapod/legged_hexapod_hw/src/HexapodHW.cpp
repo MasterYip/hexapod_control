@@ -60,7 +60,7 @@ namespace legged
                 jointData_[3*i].tau_ = jointStateMsg_.effort[3*i];
                 jointData_[3*i+1].pos_ = -jointStateMsg_.position[3*i+1] + M_PI / 2;
                 jointData_[3*i+1].vel_ = -jointStateMsg_.velocity[3*i+1];
-                jointData_[3*i+1].tau_ = jointStateMsg_.effort[3*i+1];
+                jointData_[3*i+1].tau_ = -jointStateMsg_.effort[3*i+1];
                 jointData_[3*i+2].pos_ = jointStateMsg_.position[3*i+2] + M_PI;
                 jointData_[3*i+2].vel_ = jointStateMsg_.velocity[3*i+2];
                 jointData_[3*i+2].tau_ = jointStateMsg_.effort[3*i+2];
@@ -118,7 +118,7 @@ namespace legged
             jointCmdMsg.kd.push_back(jointData_[3*i].kd_);
             jointCmdMsg.position.push_back(-jointData_[3*i+1].posDes_ + M_PI / 2);
             jointCmdMsg.velocity.push_back(-jointData_[3*i+1].velDes_);
-            jointCmdMsg.torque.push_back(jointData_[3*i+1].ff_);
+            jointCmdMsg.torque.push_back(-jointData_[3*i+1].ff_);
             jointCmdMsg.kp.push_back(jointData_[3*i+1].kp_);
             jointCmdMsg.kd.push_back(jointData_[3*i+1].kd_);
             jointCmdMsg.position.push_back(jointData_[3*i+2].posDes_ - M_PI);

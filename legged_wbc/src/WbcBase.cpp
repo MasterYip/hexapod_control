@@ -50,8 +50,8 @@ namespace legged
 
   void WbcBase::updateMeasured(const vector_t &rbdStateMeasured)
   {
-    qMeasured_.head<3>() = rbdStateMeasured.segment<3>(3);
-    qMeasured_.segment<3>(3) = rbdStateMeasured.head<3>();
+    qMeasured_.head<3>() = rbdStateMeasured.segment<3>(3); // RPY
+    qMeasured_.segment<3>(3) = rbdStateMeasured.head<3>(); // POS
     qMeasured_.tail(info_.actuatedDofNum) = rbdStateMeasured.segment(6, info_.actuatedDofNum);
     vMeasured_.head<3>() = rbdStateMeasured.segment<3>(info_.generalizedCoordinatesNum + 3);
     vMeasured_.segment<3>(3) = getEulerAnglesZyxDerivativesFromGlobalAngularVelocity<scalar_t>(

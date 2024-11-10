@@ -164,7 +164,7 @@ namespace legged
     // }
     for (size_t i = 0; i < 6; ++i)
     {
-      optimizedInput[i * 3 + 2] = 10.0;
+      optimizedInput[i * 3 + 2] = 5.0;
     }
     size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
