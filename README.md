@@ -79,6 +79,7 @@ catkin build legged_unitree_hw legged_hexapod_hw
 ```bash
 export ROBOT_TYPE=a1
 export ROBOT_TYPE=elspider_air
+source ~/Documents/CodeSpace/ROS_ws/legged_ws/devel/setup.bash
 ```
 
 2. Run the simulation:
@@ -86,10 +87,11 @@ export ROBOT_TYPE=elspider_air
 ```bash
 roslaunch legged_unitree_description empty_world.launch
 #roslaunch legged_hexapod_description empty_world.launch (Do not run this command)
+# HexapodSoftware Simulation
 source ~/Documents/CodeSpace/ROS_ws/hexapod_ws/devel/setup.bash 
 
 roslaunch user main.launch \
-controller_type:=hlc \
+controller_type:=pc \
 robot_name:=elspider_air \
 joystick_type:=keyboard_sim \
 gazebo_hang_up:=false \
@@ -147,6 +149,8 @@ rosrun rqt_controller_manager rqt_controller_manager
 
 ### BUG
 
+- `HexapodSoftware` confilct with one of `legged_control` deps (ocs2/hpp-fcl/pinocchio)
+throw `std::bad_alloc` when `HexapodSoftware` is running. 
 
 ### Note
 

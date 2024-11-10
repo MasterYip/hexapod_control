@@ -149,6 +149,17 @@ namespace legged
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
     optimizedState.setZero();
     optimizedInput.setZero();
+    // Use nominal state to test WBC
+    optimizedState[8] = 0.25;
+    // for (size_t i = 0; i < 6; ++i)
+    // {
+    //   optimizedState[12+i * 3+1] = 1;
+    //   optimizedState[12+i * 3+2] = 1;
+    // }
+    for (size_t i = 0; i < 6; ++i)
+    {
+      optimizedInput[i * 3 + 2] = 50.0;
+    }
     size_t plannedMode = 0; // The mode that is active at the time the policy is evaluated at.
     // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
@@ -158,14 +169,23 @@ namespace legged
     // TODO: use heuristics to generate the desired state and input
     std::cerr << "Optimized state: " << optimizedState.transpose() << std::endl;
     std::cerr << "Optimized input: " << optimizedInput.transpose() << std::endl;
-    std::cerr << "Measured RBD state: " << std::setprecision(3) << measuredRbdState_.transpose() << std::endl;
+    std::cerr << "Measured state for WBC: " << std::endl
+              << "Pbdy: " << std::setprecision(3)
+              << measuredRbdState_.segment(0, 6).transpose() << std::endl
+              << "JPos: " << std::setprecision(3)
+              << measuredRbdState_.segment(6, 18).transpose() << std::endl
+              << "Vbdy: " << std::setprecision(3)
+              << measuredRbdState_.segment(24, 6).transpose() << std::endl
+              << "JVel: " << std::setprecision(3)
+              << measuredRbdState_.segment(30, 18).transpose() << std::endl;
 
     wbcTimer_.startTimer();
     vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
     wbcTimer_.endTimer();
 
-    // vector_t torque = x.tail(12);
-    vector_t torque = vector_t::Zero(leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
+    vector_t torque = x.tail(18);
+    std::cerr << "Torque: " << torque.transpose() << std::endl;
+    // vector_t torque = 10*vector_t::Ones(leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
 
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
