@@ -35,6 +35,8 @@
 #include <legged_wbc/WeightedWbcSimple.h>
 #include <pluginlib/class_list_macros.hpp>
 
+#include "std_msgs/Float64MultiArray.h"
+
 namespace legged
 {
   bool HexapodController::init(hardware_interface::RobotHW *robot_hw, ros::NodeHandle &controller_nh)
@@ -98,12 +100,16 @@ namespace legged
     // Safety Checker
     safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
 
+    // Debug
+    estimationPub_ = controller_nh.advertise<std_msgs::Float64MultiArray>("RbdEstimation", 1);
+
     ROS_WARN("HexapodController initialized.");
     ROS_WARN("State Num: %d", leggedInterface_->getCentroidalModelInfo().stateDim);
     ROS_WARN("Input Num: %d", leggedInterface_->getCentroidalModelInfo().inputDim);
     ROS_WARN("Actuated Dof Num: %d", leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
     ROS_WARN("Generalized Dof Num: %d", leggedInterface_->getCentroidalModelInfo().generalizedCoordinatesNum);
     ROS_WARN("3DOF Contact Num: %d", leggedInterface_->getCentroidalModelInfo().numThreeDofContacts);
+
 
     return true;
   }
@@ -178,6 +184,12 @@ namespace legged
               << measuredRbdState_.segment(24, 6).transpose() << std::endl
               << "JVel: " << std::setprecision(3)
               << measuredRbdState_.segment(30, 18).transpose() << std::endl;
+    
+    // publish measured
+    std_msgs::Float64MultiArray msg;
+    msg.data = std::vector<double>(measuredRbdState_.data(), measuredRbdState_.data() + measuredRbdState_.size());
+    estimationPub_.publish(msg);
+
 
     wbcTimer_.startTimer();
     vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
@@ -207,7 +219,7 @@ namespace legged
     // selfCollisionVisualization_->update(currentObservation_);
 
     // // Publish the observation. Only needed for the command interface
-    // observationPublisher_.publish(ros_msg_conversions::createObservationMsg(currentObservation_));
+    // estimationPub_.publish(ros_msg_conversions::createObservationMsg(currentObservation_));
     ROS_WARN("HexapodController updated.");
   }
 
@@ -304,7 +316,7 @@ namespace legged
     rosReferenceManagerPtr->subscribe(nh);
     mpc_->getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
     mpc_->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
-    observationPublisher_ = nh.advertise<ocs2_msgs::mpc_observation>(robotName + "_mpc_observation", 1);
+    estimationPub_ = nh.advertise<ocs2_msgs::mpc_observation>(robotName + "_mpc_observation", 1);
   }
 
   void HexapodController::setupMrt()

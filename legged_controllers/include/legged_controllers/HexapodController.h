@@ -45,6 +45,10 @@ class HexapodController : public controller_interface::MultiInterfaceController<
   void starting(const ros::Time& time) override;
   void stopping(const ros::Time& /*time*/) override { mpcRunning_ = false; }
 
+  //Debug
+  ros::Publisher estimationPub_;
+  
+
  protected:
   virtual void updateStateEstimation(const ros::Time& time, const ros::Duration& period);
 
