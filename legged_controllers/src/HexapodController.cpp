@@ -160,9 +160,9 @@ namespace legged
     // optimizedState[7] = measuredRbdState_[1];
     optimizedState[8] = 0.28;
     // RPY
-    optimizedState[9] = measuredRbdState_[3];
-    optimizedState[10] = measuredRbdState_[4];
-    optimizedState[11] = measuredRbdState_[5];
+    // optimizedState[9] = measuredRbdState_[3];
+    // optimizedState[10] = measuredRbdState_[4];
+    // optimizedState[11] = measuredRbdState_[5];
     for (size_t i = 0; i < 6; ++i)
     {
       optimizedState[12 + i * 3 + 1] = 1;
@@ -170,7 +170,7 @@ namespace legged
     }
     for (size_t i = 0; i < 6; ++i)
     {
-      optimizedInput[i * 3 + 2] = 5.0;
+      optimizedInput[i * 3 + 2] = 20.0;
     }
     // The mode that is active at the time the policy is evaluated at.
     size_t plannedMode = 0b111111; // All legs are in stance mode
@@ -187,10 +187,6 @@ namespace legged
               << measuredRbdState_.segment(0, 6).transpose() << std::endl
               << "JPos: " << std::setprecision(3)
               << measuredRbdState_.segment(6, 18).transpose() << std::endl;
-              // << "Vbdy: " << std::setprecision(3)
-              // << measuredRbdState_.segment(24, 6).transpose() << std::endl
-              // << "JVel: " << std::setprecision(3)
-              // << measuredRbdState_.segment(30, 18).transpose() << std::endl;
 
     // publish measured
     std_msgs::Float64MultiArray msg;
@@ -220,8 +216,7 @@ namespace legged
     for (size_t j = 0; j < leggedInterface_->getCentroidalModelInfo().actuatedDofNum; ++j)
     {
       // hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0, 3, torque(j));
-      hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 5, 3, torque(j));
-      // hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 20, 5, 0);
+      hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0.5, 3, torque(j));
     }
 
     // // Visualization
