@@ -119,22 +119,22 @@ namespace legged
     currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
     updateStateEstimation(time, ros::Duration(0.002));
     currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
-    currentObservation_.mode = ModeNumber::STANCE;
+    currentObservation_.mode = 0b111111;
 
     TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
 
-    // // Set the first observation and command and wait for optimization to finish
-    // mpcMrtInterface_->setCurrentObservation(currentObservation_);
-    // mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
-    // ROS_INFO_STREAM("Waiting for the initial policy ...");
-    // while (!mpcMrtInterface_->initialPolicyReceived() && ros::ok())
-    // {
-    //   mpcMrtInterface_->advanceMpc();
-    //   ros::WallRate(leggedInterface_->mpcSettings().mrtDesiredFrequency_).sleep();
-    // }
-    // ROS_INFO_STREAM("Initial policy has been received.");
+    // Set the first observation and command and wait for optimization to finish
+    mpcMrtInterface_->setCurrentObservation(currentObservation_);
+    mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
+    ROS_INFO_STREAM("Waiting for the initial policy ...");
+    while (!mpcMrtInterface_->initialPolicyReceived() && ros::ok())
+    {
+      mpcMrtInterface_->advanceMpc();
+      ros::WallRate(leggedInterface_->mpcSettings().mrtDesiredFrequency_).sleep();
+    }
+    ROS_INFO_STREAM("Initial policy has been received.");
+    mpcRunning_ = true;
 
-    // mpcRunning_ = true;
     ROS_WARN("HexapodController started.");
   }
 
@@ -292,7 +292,7 @@ namespace legged
   void HexapodController::setupLeggedInterface(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                                                bool verbose)
   {
-    leggedInterface_ = std::make_shared<LeggedInterface>(taskFile, urdfFile, referenceFile);
+    leggedInterface_ = std::make_shared<LeggedHexInterface>(taskFile, urdfFile, referenceFile);
     leggedInterface_->modelSettings().jointNames = {"RF_HAA", "RF_HFE", "RF_KFE",
                                                     "RM_HAA", "RM_HFE", "RM_KFE",
                                                     "RB_HAA", "RB_HFE", "RB_KFE",

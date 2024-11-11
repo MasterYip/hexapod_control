@@ -59,7 +59,7 @@ class HexapodController : public controller_interface::MultiInterfaceController<
   virtual void setupStateEstimate(const std::string& taskFile, bool verbose);
 
   // Interface
-  std::shared_ptr<LeggedInterface> leggedInterface_;
+  std::shared_ptr<LeggedHexInterface> leggedInterface_;
   std::shared_ptr<PinocchioEndEffectorKinematics> eeKinematicsPtr_;
   std::vector<HybridJointHandle> hybridJointHandles_;
   std::vector<ContactSensorHandle> contactHandles_;
