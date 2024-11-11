@@ -37,12 +37,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "legged_reference/gait/MotionPhaseDefinition.h"
 
 #include "legged_interface/constraint/SwingTrajectoryPlanner.h"
+#include <ocs2_legged_robot/common/utils.h>
 
 namespace ocs2
 {
   namespace legged_robot
   {
 
+    inline size_t numberOfClosedContacts(const std::vector<bool>& contactFlags) {
+      size_t numStanceLegs = 0;
+      for (auto legInContact : contactFlags) {
+        if (legInContact) {
+          ++numStanceLegs;
+        }
+      }
+      return numStanceLegs;
+    }
+
+    inline vector_t weightCompensatingInput(const CentroidalModelInfoTpl<scalar_t>& info, const std::vector<bool>& contactFlags) {
+      const auto numStanceLegs = numberOfClosedContacts(contactFlags);
+      vector_t input = vector_t::Zero(info.inputDim);
+      if (numStanceLegs > 0) {
+        const scalar_t totalWeight = info.robotMass * 9.81;
+        const vector3_t forceInInertialFrame(0.0, 0.0, totalWeight / numStanceLegs);
+        for (size_t i = 0; i < contactFlags.size(); i++) {
+          if (contactFlags[i]) {
+            centroidal_model::getContactForces(input, i, info) = forceInInertialFrame;
+          }
+        }  // end of i loop
+      }
+      return input;
+    }
     /**
      * Manages the ModeSchedule and the TargetTrajectories for switched model.
      */
