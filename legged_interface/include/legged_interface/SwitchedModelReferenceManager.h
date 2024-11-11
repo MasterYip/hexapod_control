@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_legged_robot/gait/GaitSchedule.h>
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
 #include "legged_reference/gait/MotionPhaseDefinition.h"
+#include "legged_reference/gait/GaitSchedule.h"
 
 #include "legged_interface/constraint/SwingTrajectoryPlanner.h"
 #include <ocs2_legged_robot/common/utils.h>

@@ -21,6 +21,7 @@ OCS2 is a huge monorepo; **DO NOT** try to compile the whole repo. You only need
 its dependencies following the step below.
 
 1. You are supposed to clone the OCS2, pinocchio, and hpp-fcl as described in the documentation of OCS2.
+
    ```
    # Clone OCS2
    git clone git@github.com:leggedrobotics/ocs2.git
@@ -35,21 +36,23 @@ its dependencies following the step below.
    ```
 
 2. Compile the `ocs2_legged_robot_ros` package with [catkin tools](https://catkin-tools.readthedocs.io/en/latest/)
-    instead of `catkin_make`. It will take you about ten minutes.
-    ```bash
-    catkin config -DCMAKE_BUILD_TYPE=RelWithDebInfo
-    catkin build ocs2_legged_robot_ros ocs2_self_collision_visualization
-    ```
-    Ensure you can command the ANYmal as shown in
-    the [document](https://leggedrobotics.github.io/ocs2/robotic_examples.html#legged-robot) and below.
-    ![](https://leggedrobotics.github.io/ocs2/_images/legged_robot.gif)
+   instead of `catkin_make`. It will take you about ten minutes.
 
-    ```bash
-    # Launch the example for DDP
-    roslaunch ocs2_legged_robot_ros legged_robot_ddp.launch
-    # OR launch the example for SQP
-    roslaunch ocs2_legged_robot_ros legged_robot_sqp.launch
-    ```
+   ```bash
+   catkin config -DCMAKE_BUILD_TYPE=RelWithDebInfo
+   catkin build ocs2_legged_robot_ros ocs2_self_collision_visualization
+   ```
+
+   Ensure you can command the ANYmal as shown in
+   the [document](https://leggedrobotics.github.io/ocs2/robotic_examples.html#legged-robot) and below.
+   ![](https://leggedrobotics.github.io/ocs2/_images/legged_robot.gif)
+
+   ```bash
+   # Launch the example for DDP
+   roslaunch ocs2_legged_robot_ros legged_robot_ddp.launch
+   # OR launch the example for SQP
+   roslaunch ocs2_legged_robot_ros legged_robot_sqp.launch
+   ```
 
 ### Build
 
@@ -88,7 +91,7 @@ source ~/Documents/CodeSpace/ROS_ws/legged_ws/devel/setup.bash
 roslaunch legged_unitree_description empty_world.launch
 #roslaunch legged_hexapod_description empty_world.launch (Do not run this command)
 # HexapodSoftware Simulation
-source ~/Documents/CodeSpace/ROS_ws/hexapod_ws/devel/setup.bash 
+source ~/Documents/CodeSpace/ROS_ws/hexapod_ws/devel/setup.bash
 
 roslaunch user main.launch \
 controller_type:=pc \
@@ -150,7 +153,16 @@ rosrun rqt_controller_manager rqt_controller_manager
 ### BUG
 
 - `HexapodSoftware` confilct with one of `legged_control` deps (ocs2/hpp-fcl/pinocchio)
-throw `std::bad_alloc` when `HexapodSoftware` is running. 
+  throw `std::bad_alloc` when `HexapodSoftware` is running.
+
+- `GaitReceiver` in ocs2 default received gait is four-legged stance, which is not suitable for hexapod.
+
+```txt
+Subsystem: 3 out of 3
+[0]: 63,  [1]: 63,  [2]: 63,  [3]: 15,
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  The time of touch-down for the last swing of the EE with ID 4 is not defined.
+```
 
 ### Note
 

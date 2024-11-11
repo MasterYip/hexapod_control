@@ -15,8 +15,6 @@
 
 #include <pinocchio/fwd.hpp> // forward declarations must be included first.
 
-#include "legged_controllers/HexapodController.h"
-
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/thread_support/ExecuteAndSleep.h>
@@ -33,6 +31,10 @@
 #include <legged_estimation/LinearKalmanFilter.h>
 #include <legged_wbc/HierarchicalWbc.h>
 #include <legged_wbc/WeightedWbcSimple.h>
+#include "legged_controllers/HexapodController.h"
+#include "legged_reference/gait/GaitReceiver.h"
+#include "legged_reference/gait/GaitSchedule.h"
+
 #include <pluginlib/class_list_macros.hpp>
 
 #include "std_msgs/Float64MultiArray.h"
@@ -119,7 +121,7 @@ namespace legged
     currentObservation_.state.setZero(leggedInterface_->getCentroidalModelInfo().stateDim);
     updateStateEstimation(time, ros::Duration(0.002));
     currentObservation_.input.setZero(leggedInterface_->getCentroidalModelInfo().inputDim);
-    currentObservation_.mode = 0b111111;
+    currentObservation_.mode = hexapod_robot::ModeNumber::STANCE;
 
     TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
 
@@ -315,7 +317,7 @@ namespace legged
     ros::NodeHandle nh;
     // Gait receiver
     auto gaitReceiverPtr =
-        std::make_shared<GaitReceiver>(nh, leggedInterface_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(), robotName);
+        std::make_shared<hexapod_robot::GaitReceiver>(nh, leggedInterface_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(), robotName);
     // ROS ReferenceManager
     auto rosReferenceManagerPtr = std::make_shared<RosReferenceManager>(robotName, leggedInterface_->getReferenceManagerPtr());
     rosReferenceManagerPtr->subscribe(nh);

@@ -39,6 +39,8 @@ link_directories(
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
         src/gait/ModeSequenceTemplate.cpp
+        src/gait/GaitReceiver.cpp
+        src/gait/GaitSchedule.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}
