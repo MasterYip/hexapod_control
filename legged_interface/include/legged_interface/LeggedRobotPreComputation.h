@@ -42,37 +42,74 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "legged_interface/constraint/EndEffectorLinearConstraint.h"
 #include "legged_interface/constraint/SwingTrajectoryPlanner.h"
 
-namespace ocs2 {
-namespace legged_robot {
+namespace ocs2
+{
+  namespace legged_robot
+  {
 
-/** Callback for caching and reference update */
-class LeggedRobotPreComputation : public PreComputation {
- public:
-  LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                            const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings);
-  ~LeggedRobotPreComputation() override = default;
+    /** Callback for caching and reference update */
+    class LeggedRobotPreComputation : public PreComputation
+    {
+    public:
+      LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+                                const SwingTrajectoryPlanner &swingTrajectoryPlanner, ModelSettings settings);
+      ~LeggedRobotPreComputation() override = default;
 
-  LeggedRobotPreComputation* clone() const override { return new LeggedRobotPreComputation(*this); }
+      LeggedRobotPreComputation *clone() const override { return new LeggedRobotPreComputation(*this); }
 
-  void request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) override;
+      void request(RequestSet request, scalar_t t, const vector_t &x, const vector_t &u) override;
 
-  const std::vector<EndEffectorLinearConstraint::Config>& getEeNormalVelocityConstraintConfigs() const { return eeNormalVelConConfigs_; }
+      const std::vector<EndEffectorLinearConstraint::Config> &getEeNormalVelocityConstraintConfigs() const { return eeNormalVelConConfigs_; }
 
-  PinocchioInterface& getPinocchioInterface() { return pinocchioInterface_; }
-  const PinocchioInterface& getPinocchioInterface() const { return pinocchioInterface_; }
+      PinocchioInterface &getPinocchioInterface() { return pinocchioInterface_; }
+      const PinocchioInterface &getPinocchioInterface() const { return pinocchioInterface_; }
 
- protected:
-  LeggedRobotPreComputation(const LeggedRobotPreComputation& other);
+    protected:
+      LeggedRobotPreComputation(const LeggedRobotPreComputation &other);
 
- private:
-  PinocchioInterface pinocchioInterface_;
-  CentroidalModelInfo info_;
-  const SwingTrajectoryPlanner* swingTrajectoryPlannerPtr_;
-  std::unique_ptr<CentroidalModelPinocchioMapping> mappingPtr_;
-  const ModelSettings settings_;
+    private:
+      PinocchioInterface pinocchioInterface_;
+      CentroidalModelInfo info_;
+      const SwingTrajectoryPlanner *swingTrajectoryPlannerPtr_;
+      std::unique_ptr<CentroidalModelPinocchioMapping> mappingPtr_;
+      const ModelSettings settings_;
 
-  std::vector<EndEffectorLinearConstraint::Config> eeNormalVelConConfigs_;
-};
+      std::vector<EndEffectorLinearConstraint::Config> eeNormalVelConConfigs_;
+    };
 
-}  // namespace legged_robot
-}  // namespace ocs2
+  } // namespace legged_robot
+
+  namespace hexapod_robot
+  {
+    /** Callback for caching and reference update */
+    class LeggedRobotPreComputation : public PreComputation
+    {
+    public:
+      LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+                                const SwingTrajectoryPlanner &swingTrajectoryPlanner, ModelSettings settings);
+      ~LeggedRobotPreComputation() override = default;
+
+      LeggedRobotPreComputation *clone() const override { return new LeggedRobotPreComputation(*this); }
+
+      void request(RequestSet request, scalar_t t, const vector_t &x, const vector_t &u) override;
+
+      const std::vector<EndEffectorLinearConstraint::Config> &getEeNormalVelocityConstraintConfigs() const { return eeNormalVelConConfigs_; }
+
+      PinocchioInterface &getPinocchioInterface() { return pinocchioInterface_; }
+      const PinocchioInterface &getPinocchioInterface() const { return pinocchioInterface_; }
+
+    protected:
+      LeggedRobotPreComputation(const LeggedRobotPreComputation &other);
+
+    private:
+      PinocchioInterface pinocchioInterface_;
+      CentroidalModelInfo info_;
+      const SwingTrajectoryPlanner *swingTrajectoryPlannerPtr_;
+      std::unique_ptr<CentroidalModelPinocchioMapping> mappingPtr_;
+      const ModelSettings settings_;
+
+      std::vector<EndEffectorLinearConstraint::Config> eeNormalVelConConfigs_;
+    };
+
+  } // namespace hexapod_robot
+} // namespace ocs2

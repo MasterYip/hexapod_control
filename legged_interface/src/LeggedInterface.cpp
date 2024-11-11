@@ -36,8 +36,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-
-
 namespace legged
 {
   LeggedInterface::LeggedInterface(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
@@ -386,9 +384,16 @@ namespace legged
                                                  bool verbose)
   {
     auto swingTrajectoryPlanner =
-        std::make_unique<SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 6);
+        std::make_unique<hexapod_robot::SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 6);
     referenceManagerPtr_ =
-        std::make_shared<SwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
+        std::make_shared<hexapod_robot::SwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
+  }
+
+  void LeggedHexInterface::setupPreComputation(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
+                                               bool verbose)
+  {
+    problemPtr_->preComputationPtr = std::make_unique<hexapod_robot::LeggedRobotPreComputation>(
+        *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings_);
   }
 
   std::shared_ptr<GaitSchedule> LeggedHexInterface::loadGaitSchedule(const std::string &file, bool verbose) const

@@ -124,11 +124,15 @@ namespace legged
     TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
 
     // Set the first observation and command and wait for optimization to finish
+    ROS_WARN("Set Current Observation");
     mpcMrtInterface_->setCurrentObservation(currentObservation_);
+    ROS_WARN("Set ReferenceManager");
     mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
+    ROS_WARN("Wait for initial policy");
     ROS_INFO_STREAM("Waiting for the initial policy ...");
     while (!mpcMrtInterface_->initialPolicyReceived() && ros::ok())
     {
+      ROS_WARN("... Waiting for initial policy ...");
       mpcMrtInterface_->advanceMpc();
       ros::WallRate(leggedInterface_->mpcSettings().mrtDesiredFrequency_).sleep();
     }

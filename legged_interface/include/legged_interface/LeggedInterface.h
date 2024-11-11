@@ -104,6 +104,9 @@ namespace legged
 
   class LeggedHexInterface : public LeggedInterface
   {
+  protected:
+    std::shared_ptr<hexapod_robot::SwitchedModelReferenceManager> referenceManagerPtr_;
+
   public:
     LeggedHexInterface(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                        bool useHardFrictionConeConstraint = false) : LeggedInterface(taskFile, urdfFile, referenceFile, useHardFrictionConeConstraint) {}
@@ -111,6 +114,8 @@ namespace legged
     ~LeggedHexInterface() override = default;
     virtual void setupReferenceManager(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                                        bool verbose) override;
+    virtual void setupPreComputation(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
+                                     bool verbose) override;
 
     std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
   };
