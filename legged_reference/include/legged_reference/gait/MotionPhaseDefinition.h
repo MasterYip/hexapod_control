@@ -39,15 +39,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <ocs2_core/misc/LoadData.h>
 
-#include "ocs2_legged_robot/common/Types.h"
+#include "legged_reference/common/Types.h"
 
 namespace ocs2
 {
   namespace hexapod_robot
   {
     using namespace legged_robot;
-    using contact_flag_t = std::array<bool, 6>; // Override the default contact_flag_t
-
+    
     enum ModeNumber
     { // leg index 543210(LB LM LF RB RM RF) - 0b000000
       FLY = 0b000000,
