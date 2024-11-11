@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_core/misc/Lookup.h>
 
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
+#include "legged_reference/gait/MotionPhaseDefinition.h"
 
 namespace ocs2
 {
@@ -351,7 +352,7 @@ namespace ocs2
 
       for (size_t i = 0; i < numPhases; i++)
       {
-        const auto contactFlag = modeNumber2StanceLeg(phaseIDsStock[i]);
+        const auto contactFlag = hexapod_robot::modeNumber2StanceLeg(phaseIDsStock[i]);
         for (size_t j = 0; j < numFeet_; j++)
         {
           contactFlagStock[j][i] = contactFlag[j];

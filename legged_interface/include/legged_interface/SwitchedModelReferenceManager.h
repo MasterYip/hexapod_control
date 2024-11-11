@@ -34,36 +34,52 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <ocs2_legged_robot/gait/GaitSchedule.h>
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
+#include "legged_reference/gait/MotionPhaseDefinition.h"
 
 #include "legged_interface/constraint/SwingTrajectoryPlanner.h"
 
-namespace ocs2 {
-namespace legged_robot {
+namespace ocs2
+{
+  namespace legged_robot
+  {
 
-/**
- * Manages the ModeSchedule and the TargetTrajectories for switched model.
- */
-class SwitchedModelReferenceManager : public ReferenceManager {
- public:
-  SwitchedModelReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr, std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr);
+    /**
+     * Manages the ModeSchedule and the TargetTrajectories for switched model.
+     */
+    class SwitchedModelReferenceManager : public ReferenceManager
+    {
+    public:
+      SwitchedModelReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr, std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr);
 
-  ~SwitchedModelReferenceManager() override = default;
+      ~SwitchedModelReferenceManager() override = default;
 
-  void setModeSchedule(const ModeSchedule& modeSchedule) override;
+      void setModeSchedule(const ModeSchedule &modeSchedule) override;
 
-  contact_flag_t getContactFlags(scalar_t time) const;
+      virtual std::vector<bool> getContactFlags(scalar_t time) const;
 
-  const std::shared_ptr<GaitSchedule>& getGaitSchedule() { return gaitSchedulePtr_; }
+      const std::shared_ptr<GaitSchedule> &getGaitSchedule() { return gaitSchedulePtr_; }
 
-  const std::shared_ptr<SwingTrajectoryPlanner>& getSwingTrajectoryPlanner() { return swingTrajectoryPtr_; }
+      const std::shared_ptr<SwingTrajectoryPlanner> &getSwingTrajectoryPlanner() { return swingTrajectoryPtr_; }
 
- protected:
-  void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t& initState, TargetTrajectories& targetTrajectories,
-                        ModeSchedule& modeSchedule) override;
+    protected:
+      void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t &initState, TargetTrajectories &targetTrajectories,
+                            ModeSchedule &modeSchedule) override;
 
-  std::shared_ptr<GaitSchedule> gaitSchedulePtr_;
-  std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr_;
-};
+      std::shared_ptr<GaitSchedule> gaitSchedulePtr_;
+      std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr_;
+    };
 
-}  // namespace legged_robot
-}  // namespace ocs2
+    class HexSwitchedModelReferenceManager : public SwitchedModelReferenceManager
+    {
+    public:
+      HexSwitchedModelReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr, std::shared_ptr<HexSwingTrajectoryPlanner> swingTrajectoryPtr)
+          : SwitchedModelReferenceManager(std::move(gaitSchedulePtr), std::move(swingTrajectoryPtr)) {}
+
+      ~HexSwitchedModelReferenceManager() override = default;
+
+    protected:
+      virtual std::vector<bool> getContactFlags(scalar_t time) const override;
+    };
+
+  } // namespace legged_robot
+} // namespace ocs2

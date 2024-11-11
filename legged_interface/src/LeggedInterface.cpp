@@ -388,7 +388,7 @@ namespace legged
     auto swingTrajectoryPlanner =
         std::make_unique<HexSwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 6);
     referenceManagerPtr_ =
-        std::make_shared<SwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
+        std::make_shared<HexSwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
   }
 
   std::shared_ptr<GaitSchedule> LeggedHexInterface::loadGaitSchedule(const std::string &file, bool verbose) const

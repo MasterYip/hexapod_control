@@ -14,24 +14,12 @@
 //
 
 #include "legged_wbc/WeightedWbcSimple.h"
-
+#include "legged_reference/gait/MotionPhaseDefinition.h"
 #include <qpOASES.hpp>
 
 namespace legged
 {
 
-    inline hex_contact_flag_t modeNumber2StanceLegHex(const size_t &modeNumber)
-    {
-        hex_contact_flag_t stanceLegs; // {LF, RF, LM, RM, LH, RH}
-        size_t mode = modeNumber;
-        // leg index 543210 - 0b000000
-        for (size_t i = 0; i < 6; i++)
-        {
-            stanceLegs[i] = mode & 1;
-            mode >>= 1;
-        }
-        return stanceLegs;
-    }
 
     vector_t WeightedWbcSimple::update(const vector_t &stateDesired, const vector_t &inputDesired, const vector_t &rbdStateMeasured, size_t mode,
                                        scalar_t period)
@@ -39,7 +27,7 @@ namespace legged
         // We reimplement the update function here (replace contactFlag_ calculation)
         // WbcBase::update(stateDesired, inputDesired, rbdStateMeasured, mode, period);
 
-        contactFlagHex_ = modeNumber2StanceLegHex(mode);
+        contactFlagHex_ = hexapod_robot::modeNumber2StanceLeg(mode);
         numContacts_ = 0;
         for (bool flag : contactFlagHex_)
         {

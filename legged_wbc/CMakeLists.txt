@@ -6,6 +6,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
+        legged_reference
         ocs2_legged_robot
         qpoases_catkin
         )
@@ -22,6 +23,7 @@ catkin_package(
         ${PROJECT_NAME}
         CATKIN_DEPENDS
         roscpp
+        legged_reference
         ocs2_legged_robot
         DEPENDS
         pinocchio

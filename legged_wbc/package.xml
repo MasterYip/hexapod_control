@@ -15,4 +15,5 @@
     <depend>ocs2_legged_robot</depend>
     <depend>qpoases_catkin</depend>
     <depend>pinocchio</depend>
+    <depend>legged_reference</depend>
 </package>
