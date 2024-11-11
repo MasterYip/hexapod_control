@@ -65,7 +65,7 @@ namespace legged
     virtual void setupPreComputation(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                                      bool verbose);
 
-    std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
+    std::shared_ptr<hexapod_robot::GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
 
     std::unique_ptr<StateInputCost> getBaseTrackingCost(const std::string &taskFile, const CentroidalModelInfo &info, bool verbose);
     matrix_t initializeInputCostWeight(const std::string &taskFile, const CentroidalModelInfo &info);
@@ -112,7 +112,7 @@ namespace legged
     virtual void setupReferenceManager(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                                        bool verbose) override;
 
-    std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
+    std::shared_ptr<hexapod_robot::GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
   };
 
 } // namespace legged

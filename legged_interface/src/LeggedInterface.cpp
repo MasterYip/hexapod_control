@@ -36,8 +36,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-
-
 namespace legged
 {
   LeggedInterface::LeggedInterface(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
@@ -183,7 +181,7 @@ namespace legged
         *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings_);
   }
 
-  std::shared_ptr<GaitSchedule> LeggedInterface::loadGaitSchedule(const std::string &file, bool verbose) const
+  std::shared_ptr<hexapod_robot::GaitSchedule> LeggedInterface::loadGaitSchedule(const std::string &file, bool verbose) const
   {
     const auto initModeSchedule = loadModeSchedule(file, "initialModeSchedule", false);
     const auto defaultModeSequenceTemplate = loadModeSequenceTemplate(file, "defaultModeSequenceTemplate", false);
@@ -213,7 +211,7 @@ namespace legged
       std::cerr << "#### =============================================================================\n";
     }
 
-    return std::make_shared<GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime);
+    return std::make_shared<hexapod_robot::GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime);
   }
 
   matrix_t LeggedInterface::initializeInputCostWeight(const std::string &taskFile, const CentroidalModelInfo &info)
@@ -391,7 +389,7 @@ namespace legged
         std::make_shared<HexSwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
   }
 
-  std::shared_ptr<GaitSchedule> LeggedHexInterface::loadGaitSchedule(const std::string &file, bool verbose) const
+  std::shared_ptr<hexapod_robot::GaitSchedule> LeggedHexInterface::loadGaitSchedule(const std::string &file, bool verbose) const
   {
     const auto initModeSchedule = hexapod_robot::loadModeSchedule(file, "initialModeSchedule", false);
     const auto defaultModeSequenceTemplate = hexapod_robot::loadModeSequenceTemplate(file, "defaultModeSequenceTemplate", false);
@@ -421,7 +419,7 @@ namespace legged
       std::cerr << "#### =============================================================================\n";
     }
 
-    return std::make_shared<GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime);
+    return std::make_shared<hexapod_robot::GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime);
   }
 
 } // namespace legged

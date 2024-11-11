@@ -11,6 +11,7 @@ find_package(catkin REQUIRED
         legged_interface
         legged_wbc
         legged_estimation
+        legged_reference
         controller_interface
         ocs2_legged_robot_ros
         ocs2_self_collision_visualization
@@ -31,6 +32,7 @@ catkin_package(
         legged_interface
         legged_wbc
         legged_estimation
+        legged_reference
         controller_interface
         ocs2_legged_robot_ros
         ocs2_self_collision_visualization

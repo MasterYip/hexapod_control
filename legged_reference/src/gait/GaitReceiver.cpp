@@ -37,7 +37,7 @@ namespace ocs2
     namespace hexapod_robot
     {
 
-        GaitReceiver::GaitReceiver(::ros::NodeHandle nodeHandle, std::shared_ptr<GaitSchedule> gaitSchedulePtr, const std::string &robotName)
+        GaitReceiver::GaitReceiver(::ros::NodeHandle nodeHandle, std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr, const std::string &robotName)
             : gaitSchedulePtr_(std::move(gaitSchedulePtr)), receivedGait_({0.0, 1.0}, {hexapod_robot::ModeNumber::STANCE}), gaitUpdated_(false)
         {
             mpcModeSequenceSubscriber_ = nodeHandle.subscribe(robotName + "_mpc_mode_schedule", 1, &GaitReceiver::mpcModeSequenceCallback, this,

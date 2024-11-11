@@ -34,7 +34,7 @@ namespace ocs2
   namespace legged_robot
   {
 
-    SwitchedModelReferenceManager::SwitchedModelReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr,
+    SwitchedModelReferenceManager::SwitchedModelReferenceManager(std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr,
                                                                  std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr)
         : ReferenceManager(TargetTrajectories(), ModeSchedule()),
           gaitSchedulePtr_(std::move(gaitSchedulePtr)),

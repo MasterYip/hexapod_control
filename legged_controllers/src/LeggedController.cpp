@@ -23,6 +23,8 @@
 #include <legged_wbc/HierarchicalWbc.h>
 #include <legged_wbc/WeightedWbc.h>
 #include <pluginlib/class_list_macros.hpp>
+#include "legged_reference/gait/GaitReceiver.h"
+#include "legged_reference/gait/GaitSchedule.h"
 
 namespace legged {
 bool LeggedController::init(hardware_interface::RobotHW* robot_hw, ros::NodeHandle& controller_nh) {
@@ -213,7 +215,7 @@ void LeggedController::setupMpc() {
   ros::NodeHandle nh;
   // Gait receiver
   auto gaitReceiverPtr =
-      std::make_shared<GaitReceiver>(nh, leggedInterface_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(), robotName);
+      std::make_shared<hexapod_robot::GaitReceiver>(nh, leggedInterface_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(), robotName);
   // ROS ReferenceManager
   auto rosReferenceManagerPtr = std::make_shared<RosReferenceManager>(robotName, leggedInterface_->getReferenceManagerPtr());
   rosReferenceManagerPtr->subscribe(nh);

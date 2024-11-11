@@ -41,29 +41,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "legged_reference/gait/ModeSequenceTemplate.h"
 #include "legged_reference/gait/MotionPhaseDefinition.h"
 
-namespace ocs2 {
-namespace hexapod_robot{
+namespace ocs2
+{
+  namespace hexapod_robot
+  {
 
-class GaitReceiver : public SolverSynchronizedModule {
- public:
-  GaitReceiver(::ros::NodeHandle nodeHandle, std::shared_ptr<GaitSchedule> gaitSchedulePtr, const std::string& robotName);
+    class GaitReceiver : public SolverSynchronizedModule
+    {
+    public:
+      GaitReceiver(::ros::NodeHandle nodeHandle, std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr, const std::string &robotName);
 
-  void preSolverRun(scalar_t initTime, scalar_t finalTime, const vector_t& currentState,
-                    const ReferenceManagerInterface& referenceManager) override;
+      void preSolverRun(scalar_t initTime, scalar_t finalTime, const vector_t &currentState,
+                        const ReferenceManagerInterface &referenceManager) override;
 
-  void postSolverRun(const PrimalSolution& primalSolution) override{};
+      void postSolverRun(const PrimalSolution &primalSolution) override {};
 
- private:
-  void mpcModeSequenceCallback(const ocs2_msgs::mode_schedule::ConstPtr& msg);
+    private:
+      void mpcModeSequenceCallback(const ocs2_msgs::mode_schedule::ConstPtr &msg);
 
-  std::shared_ptr<GaitSchedule> gaitSchedulePtr_;
+      std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr_;
 
-  ::ros::Subscriber mpcModeSequenceSubscriber_;
+      ::ros::Subscriber mpcModeSequenceSubscriber_;
 
-  std::mutex receivedGaitMutex_;
-  std::atomic_bool gaitUpdated_;
-  ModeSequenceTemplate receivedGait_;
-};
+      std::mutex receivedGaitMutex_;
+      std::atomic_bool gaitUpdated_;
+      ModeSequenceTemplate receivedGait_;
+    };
 
-}  // namespace legged_robot
-}  // namespace ocs2
+  } // namespace legged_robot
+} // namespace ocs2

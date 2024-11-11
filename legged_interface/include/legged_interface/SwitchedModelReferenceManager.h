@@ -45,27 +45,34 @@ namespace ocs2
   namespace legged_robot
   {
 
-    inline size_t numberOfClosedContacts(const std::vector<bool>& contactFlags) {
+    inline size_t numberOfClosedContacts(const std::vector<bool> &contactFlags)
+    {
       size_t numStanceLegs = 0;
-      for (auto legInContact : contactFlags) {
-        if (legInContact) {
+      for (auto legInContact : contactFlags)
+      {
+        if (legInContact)
+        {
           ++numStanceLegs;
         }
       }
       return numStanceLegs;
     }
 
-    inline vector_t weightCompensatingInput(const CentroidalModelInfoTpl<scalar_t>& info, const std::vector<bool>& contactFlags) {
+    inline vector_t weightCompensatingInput(const CentroidalModelInfoTpl<scalar_t> &info, const std::vector<bool> &contactFlags)
+    {
       const auto numStanceLegs = numberOfClosedContacts(contactFlags);
       vector_t input = vector_t::Zero(info.inputDim);
-      if (numStanceLegs > 0) {
+      if (numStanceLegs > 0)
+      {
         const scalar_t totalWeight = info.robotMass * 9.81;
         const vector3_t forceInInertialFrame(0.0, 0.0, totalWeight / numStanceLegs);
-        for (size_t i = 0; i < contactFlags.size(); i++) {
-          if (contactFlags[i]) {
+        for (size_t i = 0; i < contactFlags.size(); i++)
+        {
+          if (contactFlags[i])
+          {
             centroidal_model::getContactForces(input, i, info) = forceInInertialFrame;
           }
-        }  // end of i loop
+        } // end of i loop
       }
       return input;
     }
@@ -75,7 +82,7 @@ namespace ocs2
     class SwitchedModelReferenceManager : public ReferenceManager
     {
     public:
-      SwitchedModelReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr, std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr);
+      SwitchedModelReferenceManager(std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr, std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr);
 
       ~SwitchedModelReferenceManager() override = default;
 
@@ -83,7 +90,7 @@ namespace ocs2
 
       virtual std::vector<bool> getContactFlags(scalar_t time) const;
 
-      const std::shared_ptr<GaitSchedule> &getGaitSchedule() { return gaitSchedulePtr_; }
+      const std::shared_ptr<hexapod_robot::GaitSchedule> &getGaitSchedule() { return gaitSchedulePtr_; }
 
       const std::shared_ptr<SwingTrajectoryPlanner> &getSwingTrajectoryPlanner() { return swingTrajectoryPtr_; }
 
@@ -91,14 +98,14 @@ namespace ocs2
       void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t &initState, TargetTrajectories &targetTrajectories,
                             ModeSchedule &modeSchedule) override;
 
-      std::shared_ptr<GaitSchedule> gaitSchedulePtr_;
+      std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr_;
       std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr_;
     };
 
     class HexSwitchedModelReferenceManager : public SwitchedModelReferenceManager
     {
     public:
-      HexSwitchedModelReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr, std::shared_ptr<HexSwingTrajectoryPlanner> swingTrajectoryPtr)
+      HexSwitchedModelReferenceManager(std::shared_ptr<hexapod_robot::GaitSchedule> gaitSchedulePtr, std::shared_ptr<HexSwingTrajectoryPlanner> swingTrajectoryPtr)
           : SwitchedModelReferenceManager(std::move(gaitSchedulePtr), std::move(swingTrajectoryPtr)) {}
 
       ~HexSwitchedModelReferenceManager() override = default;
