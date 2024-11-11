@@ -19,7 +19,7 @@ namespace ocs2
     namespace hexapod_robot
     {
         template <typename T>
-        using feet_array_t = std::array<T, 4>;
+        using feet_array_t = std::array<T, 6>;
         using contact_flag_t = feet_array_t<bool>;
     } // namespace hexapod_robot
 } // namespace ocs2

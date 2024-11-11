@@ -386,7 +386,7 @@ namespace legged
                                                  bool verbose)
   {
     auto swingTrajectoryPlanner =
-        std::make_unique<SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 6);
+        std::make_unique<HexSwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 6);
     referenceManagerPtr_ =
         std::make_shared<SwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
   }
