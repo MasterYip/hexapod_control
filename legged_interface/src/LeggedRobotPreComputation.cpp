@@ -38,79 +38,156 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "legged_interface/LeggedRobotPreComputation.h"
 
-namespace ocs2 {
-namespace legged_robot {
-
-/******************************************************************************************************/
-/******************************************************************************************************/
-/******************************************************************************************************/
-LeggedRobotPreComputation::LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                                                     const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings)
-    : pinocchioInterface_(std::move(pinocchioInterface)),
-      info_(std::move(info)),
-      swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner),
-      mappingPtr_(new CentroidalModelPinocchioMapping(info_)),
-      settings_(std::move(settings)) {
-  eeNormalVelConConfigs_.resize(info_.numThreeDofContacts);
-  mappingPtr_->setPinocchioInterface(pinocchioInterface_);
-}
-
-/******************************************************************************************************/
-/******************************************************************************************************/
-/******************************************************************************************************/
-LeggedRobotPreComputation::LeggedRobotPreComputation(const LeggedRobotPreComputation& rhs)
-    : pinocchioInterface_(rhs.pinocchioInterface_),
-      info_(rhs.info_),
-      swingTrajectoryPlannerPtr_(rhs.swingTrajectoryPlannerPtr_),
-      mappingPtr_(rhs.mappingPtr_->clone()),
-      settings_(rhs.settings_) {
-  eeNormalVelConConfigs_.resize(rhs.eeNormalVelConConfigs_.size());
-  mappingPtr_->setPinocchioInterface(pinocchioInterface_);
-}
-
-/******************************************************************************************************/
-/******************************************************************************************************/
-/******************************************************************************************************/
-void LeggedRobotPreComputation::request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) {
-  if (!request.containsAny(Request::Cost + Request::Constraint + Request::SoftConstraint)) {
-    return;
-  }
-
-  // lambda to set config for normal velocity constraints
-  auto eeNormalVelConConfig = [&](size_t footIndex) {
-    EndEffectorLinearConstraint::Config config;
-    config.b = (vector_t(1) << -swingTrajectoryPlannerPtr_->getZvelocityConstraint(footIndex, t)).finished();
-    config.Av = (matrix_t(1, 3) << 0.0, 0.0, 1.0).finished();
-    if (!numerics::almost_eq(settings_.positionErrorGain, 0.0)) {
-      config.b(0) -= settings_.positionErrorGain * swingTrajectoryPlannerPtr_->getZpositionConstraint(footIndex, t);
-      config.Ax = (matrix_t(1, 3) << 0.0, 0.0, settings_.positionErrorGain).finished();
+namespace ocs2
+{
+  namespace legged_robot
+  {
+    LeggedRobotPreComputation::LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+                                                         const SwingTrajectoryPlanner &swingTrajectoryPlanner, ModelSettings settings)
+        : pinocchioInterface_(std::move(pinocchioInterface)),
+          info_(std::move(info)),
+          swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner),
+          mappingPtr_(new CentroidalModelPinocchioMapping(info_)),
+          settings_(std::move(settings))
+    {
+      eeNormalVelConConfigs_.resize(info_.numThreeDofContacts);
+      mappingPtr_->setPinocchioInterface(pinocchioInterface_);
     }
-    return config;
-  };
 
-  if (request.contains(Request::Constraint)) {
-    for (size_t i = 0; i < info_.numThreeDofContacts; i++) {
-      eeNormalVelConConfigs_[i] = eeNormalVelConConfig(i);
+    LeggedRobotPreComputation::LeggedRobotPreComputation(const LeggedRobotPreComputation &rhs)
+        : pinocchioInterface_(rhs.pinocchioInterface_),
+          info_(rhs.info_),
+          swingTrajectoryPlannerPtr_(rhs.swingTrajectoryPlannerPtr_),
+          mappingPtr_(rhs.mappingPtr_->clone()),
+          settings_(rhs.settings_)
+    {
+      eeNormalVelConConfigs_.resize(rhs.eeNormalVelConConfigs_.size());
+      mappingPtr_->setPinocchioInterface(pinocchioInterface_);
     }
-  }
 
-  const auto& model = pinocchioInterface_.getModel();
-  auto& data = pinocchioInterface_.getData();
-  vector_t q = mappingPtr_->getPinocchioJointPosition(x);
-  if (request.contains(Request::Approximation)) {
-    pinocchio::forwardKinematics(model, data, q);
-    pinocchio::updateFramePlacements(model, data);
-    pinocchio::updateGlobalPlacements(model, data);
-    pinocchio::computeJointJacobians(model, data);
+    void LeggedRobotPreComputation::request(RequestSet request, scalar_t t, const vector_t &x, const vector_t &u)
+    {
+      if (!request.containsAny(Request::Cost + Request::Constraint + Request::SoftConstraint))
+      {
+        return;
+      }
 
-    updateCentroidalDynamics(pinocchioInterface_, info_, q);
-    vector_t v = mappingPtr_->getPinocchioJointVelocity(x, u);
-    updateCentroidalDynamicsDerivatives(pinocchioInterface_, info_, q, v);
-  } else {
-    pinocchio::forwardKinematics(model, data, q);
-    pinocchio::updateFramePlacements(model, data);
-  }
-}
+      // lambda to set config for normal velocity constraints
+      auto eeNormalVelConConfig = [&](size_t footIndex)
+      {
+        EndEffectorLinearConstraint::Config config;
+        config.b = (vector_t(1) << -swingTrajectoryPlannerPtr_->getZvelocityConstraint(footIndex, t)).finished();
+        config.Av = (matrix_t(1, 3) << 0.0, 0.0, 1.0).finished();
+        if (!numerics::almost_eq(settings_.positionErrorGain, 0.0))
+        {
+          config.b(0) -= settings_.positionErrorGain * swingTrajectoryPlannerPtr_->getZpositionConstraint(footIndex, t);
+          config.Ax = (matrix_t(1, 3) << 0.0, 0.0, settings_.positionErrorGain).finished();
+        }
+        return config;
+      };
 
-}  // namespace legged_robot
-}  // namespace ocs2
+      if (request.contains(Request::Constraint))
+      {
+        for (size_t i = 0; i < info_.numThreeDofContacts; i++)
+        {
+          eeNormalVelConConfigs_[i] = eeNormalVelConConfig(i);
+        }
+      }
+
+      const auto &model = pinocchioInterface_.getModel();
+      auto &data = pinocchioInterface_.getData();
+      vector_t q = mappingPtr_->getPinocchioJointPosition(x);
+      if (request.contains(Request::Approximation))
+      {
+        pinocchio::forwardKinematics(model, data, q);
+        pinocchio::updateFramePlacements(model, data);
+        pinocchio::updateGlobalPlacements(model, data);
+        pinocchio::computeJointJacobians(model, data);
+
+        updateCentroidalDynamics(pinocchioInterface_, info_, q);
+        vector_t v = mappingPtr_->getPinocchioJointVelocity(x, u);
+        updateCentroidalDynamicsDerivatives(pinocchioInterface_, info_, q, v);
+      }
+      else
+      {
+        pinocchio::forwardKinematics(model, data, q);
+        pinocchio::updateFramePlacements(model, data);
+      }
+    }
+  } // namespace legged_robot
+  namespace hexapod_robot
+  {
+    LeggedRobotPreComputation::LeggedRobotPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+                                                         const SwingTrajectoryPlanner &swingTrajectoryPlanner, ModelSettings settings)
+        : pinocchioInterface_(std::move(pinocchioInterface)),
+          info_(std::move(info)),
+          swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner),
+          mappingPtr_(new CentroidalModelPinocchioMapping(info_)),
+          settings_(std::move(settings))
+    {
+      eeNormalVelConConfigs_.resize(info_.numThreeDofContacts);
+      mappingPtr_->setPinocchioInterface(pinocchioInterface_);
+    }
+
+    LeggedRobotPreComputation::LeggedRobotPreComputation(const LeggedRobotPreComputation &rhs)
+        : pinocchioInterface_(rhs.pinocchioInterface_),
+          info_(rhs.info_),
+          swingTrajectoryPlannerPtr_(rhs.swingTrajectoryPlannerPtr_),
+          mappingPtr_(rhs.mappingPtr_->clone()),
+          settings_(rhs.settings_)
+    {
+      eeNormalVelConConfigs_.resize(rhs.eeNormalVelConConfigs_.size());
+      mappingPtr_->setPinocchioInterface(pinocchioInterface_);
+    }
+
+    void LeggedRobotPreComputation::request(RequestSet request, scalar_t t, const vector_t &x, const vector_t &u)
+    {
+      if (!request.containsAny(Request::Cost + Request::Constraint + Request::SoftConstraint))
+      {
+        return;
+      }
+
+      // lambda to set config for normal velocity constraints
+      auto eeNormalVelConConfig = [&](size_t footIndex)
+      {
+        EndEffectorLinearConstraint::Config config;
+        config.b = (vector_t(1) << -swingTrajectoryPlannerPtr_->getZvelocityConstraint(footIndex, t)).finished();
+        config.Av = (matrix_t(1, 3) << 0.0, 0.0, 1.0).finished();
+        if (!numerics::almost_eq(settings_.positionErrorGain, 0.0))
+        {
+          config.b(0) -= settings_.positionErrorGain * swingTrajectoryPlannerPtr_->getZpositionConstraint(footIndex, t);
+          config.Ax = (matrix_t(1, 3) << 0.0, 0.0, settings_.positionErrorGain).finished();
+        }
+        return config;
+      };
+
+      if (request.contains(Request::Constraint))
+      {
+        for (size_t i = 0; i < info_.numThreeDofContacts; i++)
+        {
+          eeNormalVelConConfigs_[i] = eeNormalVelConConfig(i);
+        }
+      }
+
+      const auto &model = pinocchioInterface_.getModel();
+      auto &data = pinocchioInterface_.getData();
+      vector_t q = mappingPtr_->getPinocchioJointPosition(x);
+      if (request.contains(Request::Approximation))
+      {
+        pinocchio::forwardKinematics(model, data, q);
+        pinocchio::updateFramePlacements(model, data);
+        pinocchio::updateGlobalPlacements(model, data);
+        pinocchio::computeJointJacobians(model, data);
+
+        updateCentroidalDynamics(pinocchioInterface_, info_, q);
+        vector_t v = mappingPtr_->getPinocchioJointVelocity(x, u);
+        updateCentroidalDynamicsDerivatives(pinocchioInterface_, info_, q, v);
+      }
+      else
+      {
+        pinocchio::forwardKinematics(model, data, q);
+        pinocchio::updateFramePlacements(model, data);
+      }
+    }
+  } // namespace hexapod_robot
+} // namespace ocs2
