@@ -33,6 +33,7 @@ class StateEstimateBase {
 
   virtual vector_t update(const ros::Time& time, const ros::Duration& period) = 0;
 
+  // FIXME: adapt to hexapod (not used temporarily)
   size_t getMode() { return stanceLeg2ModeNumber(contactFlag_); }
 
  protected:

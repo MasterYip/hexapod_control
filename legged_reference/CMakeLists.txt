@@ -1,25 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
-project(legged_interface)
+project(legged_reference)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+## Find catkin macros and libraries
 find_package(catkin REQUIRED
         COMPONENTS
         roscpp
-        legged_reference
         ocs2_legged_robot
-        ocs2_self_collision
+        ocs2_legged_robot_ros
         )
-
-find_package(Boost REQUIRED COMPONENTS
-        system
-        filesystem
-        )
-
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(pinocchio REQUIRED pinocchio)
 
 catkin_package(
         INCLUDE_DIRS
@@ -28,11 +20,8 @@ catkin_package(
         ${PROJECT_NAME}
         CATKIN_DEPENDS
         roscpp
-        legged_reference
         ocs2_legged_robot
-        ocs2_self_collision
-        DEPENDS
-        pinocchio
+        ocs2_legged_robot_ros
 )
 
 ###########
@@ -42,33 +31,36 @@ catkin_package(
 include_directories(
         include
         ${catkin_INCLUDE_DIRS}
-        ${EIGEN3_INCLUDE_DIRS}
-        ${pinocchio_INCLUDE_DIRS}
 )
 
 link_directories(
-        ${pinocchio_LIBRARY_DIRS}
 )
 
+## Declare a cpp library
 add_library(${PROJECT_NAME}
-        src/constraint/EndEffectorLinearConstraint.cpp
-        src/constraint/FrictionConeConstraint.cpp
-        src/constraint/ZeroForceConstraint.cpp
-        src/constraint/NormalVelocityConstraintCppAd.cpp
-        src/constraint/ZeroVelocityConstraintCppAd.cpp
-        src/constraint/SwingTrajectoryPlanner.cpp
-        src/initialization/LeggedRobotInitializer.cpp
-        src/SwitchedModelReferenceManager.cpp
-        src/LeggedRobotPreComputation.cpp
-        src/LeggedInterface.cpp
+        src/gait/ModeSequenceTemplate.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
-        ${pinocchio_LIBRARIES}
         )
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
+
+
+# Target trajectories publish node
+# add_executable(legged_target_trajectories_publisher
+#         src/TargetTrajectoriesPublisher.cpp
+#         )
+# add_dependencies(legged_target_trajectories_publisher
+#         ${PROJECT_NAME}
+#         ${catkin_EXPORTED_TARGETS}
+#         )
+# target_link_libraries(legged_target_trajectories_publisher
+#         ${PROJECT_NAME}
+#         ${catkin_LIBRARIES}
+#         )
+# target_compile_options(legged_target_trajectories_publisher PRIVATE ${OCS2_CXX_FLAGS})
 
 #########################
 ###   CLANG TOOLING   ###
@@ -77,7 +69,7 @@ find_package(cmake_clang_tools QUIET)
 if (cmake_clang_tools_FOUND)
     message(STATUS "Run clang tooling for target " ${PROJECT_NAME})
     add_clang_tooling(
-            TARGETS ${PROJECT_NAME}
+            TARGETS ${PROJECT_NAME} legged_target_trajectories_publisher
             SOURCE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/include
             CT_HEADER_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
             CF_WERROR

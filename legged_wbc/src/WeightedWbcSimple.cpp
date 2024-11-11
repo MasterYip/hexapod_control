@@ -24,7 +24,7 @@ namespace legged
     {
         hex_contact_flag_t stanceLegs; // {LF, RF, LM, RM, LH, RH}
         size_t mode = modeNumber;
-        // leg index xx543210b
+        // leg index 543210 - 0b000000
         for (size_t i = 0; i < 6; i++)
         {
             stanceLegs[i] = mode & 1;

@@ -17,6 +17,8 @@
 #include "legged_interface/cost/LeggedRobotQuadraticTrackingCost.h"
 #include "legged_interface/initialization/LeggedRobotInitializer.h"
 
+#include "legged_reference/gait/ModeSequenceTemplate.h"
+
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_centroidal_model/FactoryFunctions.h>
@@ -33,6 +35,8 @@
 // Boost
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+
+
 
 namespace legged
 {
@@ -376,6 +380,8 @@ namespace legged
     return std::make_unique<StateSoftConstraint>(std::move(constraint), std::move(penalty));
   }
 
+  /************************* Legged Hex Interface *************************/
+
   void LeggedHexInterface::setupReferenceManager(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                                                  bool verbose)
   {
@@ -383,6 +389,39 @@ namespace legged
         std::make_unique<SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 6);
     referenceManagerPtr_ =
         std::make_shared<SwitchedModelReferenceManager>(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner));
+  }
+
+  std::shared_ptr<GaitSchedule> LeggedHexInterface::loadGaitSchedule(const std::string &file, bool verbose) const
+  {
+    const auto initModeSchedule = hexapod_robot::loadModeSchedule(file, "initialModeSchedule", false);
+    const auto defaultModeSequenceTemplate = hexapod_robot::loadModeSequenceTemplate(file, "defaultModeSequenceTemplate", false);
+
+    const auto defaultGait = [defaultModeSequenceTemplate]
+    {
+      Gait gait{};
+      gait.duration = defaultModeSequenceTemplate.switchingTimes.back();
+      // Events: from time -> phase
+      std::for_each(defaultModeSequenceTemplate.switchingTimes.begin() + 1, defaultModeSequenceTemplate.switchingTimes.end() - 1,
+                    [&](double eventTime)
+                    { gait.eventPhases.push_back(eventTime / gait.duration); });
+      // Modes:
+      gait.modeSequence = defaultModeSequenceTemplate.modeSequence;
+      return gait;
+    }();
+
+    // display
+    if (verbose)
+    {
+      std::cerr << "\n#### Modes Schedule: ";
+      std::cerr << "\n#### =============================================================================\n";
+      std::cerr << "Initial Modes Schedule: \n"
+                << initModeSchedule;
+      std::cerr << "Default Modes Sequence Template: \n"
+                << defaultModeSequenceTemplate;
+      std::cerr << "#### =============================================================================\n";
+    }
+
+    return std::make_shared<GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime);
   }
 
 } // namespace legged
