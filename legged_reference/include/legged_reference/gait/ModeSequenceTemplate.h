@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vector>
 
 #include <ocs2_core/reference/ModeSchedule.h>
-
+#include "ocs2_legged_robot/gait/ModeSequenceTemplate.h"
 #include "ocs2_legged_robot/gait/Gait.h"
 #include "MotionPhaseDefinition.h"
 
@@ -42,45 +42,6 @@ namespace ocs2
   namespace hexapod_robot
   {
     using namespace legged_robot;
-
-    /**
-     * ModeSequenceTemplate describes a periodic sequence of modes. It is defined by
-     * - switching times (size N+1), where the first time is 0, and the last time denotes the period of the cycle
-     * - modeSequence (size N), indicating the mode between the switching times.
-     */
-    struct ModeSequenceTemplate
-    {
-      /**
-       * Constructor for a ModeSequenceTemplate. The number of modes must be greater than zero (N > 0)
-       * @param [in] switchingTimesInput : switching times of size N + 1
-       * @param [in] modeSequenceInput : mode sequence of size N
-       */
-      ModeSequenceTemplate(std::vector<scalar_t> switchingTimesInput, std::vector<size_t> modeSequenceInput)
-          : switchingTimes(std::move(switchingTimesInput)), modeSequence(std::move(modeSequenceInput))
-      {
-        assert(!modeSequence.empty());
-        assert(switchingTimes.size() == modeSequence.size() + 1);
-      }
-
-      /**
-       * Defined as [t_0=0, t_1, .., t_n, t_(n+1)=T], where T is the overall duration
-       * of the template logic. t_1 to t_n are the event moments.
-       */
-      std::vector<scalar_t> switchingTimes;
-
-      /**
-       * Defined as [sys_0, sys_n], are the switching systems IDs. Here sys_i is
-       * active in period [t_i, t_(i+1)]
-       */
-      std::vector<size_t> modeSequence;
-    };
-
-    /** Swap two modesequence templates */
-    inline void swap(ModeSequenceTemplate &lh, ModeSequenceTemplate &rh)
-    {
-      lh.switchingTimes.swap(rh.switchingTimes);
-      lh.modeSequence.swap(rh.modeSequence);
-    }
 
     /** Print the modesequence template */
     std::ostream &operator<<(std::ostream &stream, const ModeSequenceTemplate &modeSequenceTemplate);

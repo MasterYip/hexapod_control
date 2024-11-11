@@ -112,7 +112,7 @@ namespace legged
     virtual void setupReferenceManager(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
                                        bool verbose) override;
 
-    std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const override;
+    std::shared_ptr<GaitSchedule> loadGaitSchedule(const std::string &file, bool verbose) const;
   };
 
 } // namespace legged
