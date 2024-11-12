@@ -10,4 +10,7 @@
 
     <param name="robot_type" value="$(arg robot_type)"/>
     <node name="legged_hexapod_hw" pkg="legged_hexapod_hw" type="legged_hexapod_hw" respawn="false" clear_params="true"/>
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find legged_hexapod_description)/rviz/default.rviz"/>
+
 </launch>

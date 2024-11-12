@@ -67,7 +67,7 @@ namespace legged
     CentroidalModelPinocchioMapping pinocchioMapping(leggedInterface_->getCentroidalModelInfo());
     eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), pinocchioMapping,
                                                                         leggedInterface_->modelSettings().contactNames3DoF);
-    robotVisualizer_ = std::make_shared<LeggedRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
+    robotVisualizer_ = std::make_shared<hexapod_robot::HexapodRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
                                                                leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
     selfCollisionVisualization_.reset(new LeggedSelfCollisionVisualization(leggedInterface_->getPinocchioInterface(),
                                                                            leggedInterface_->getGeometryInterface(), pinocchioMapping, nh));
@@ -222,7 +222,7 @@ namespace legged
     }
 
     // Visualization
-    // robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
+    robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
     // selfCollisionVisualization_->update(currentObservation_);
 
     ROS_WARN("HexapodController updated.");

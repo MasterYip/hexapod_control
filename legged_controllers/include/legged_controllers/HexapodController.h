@@ -21,7 +21,6 @@
 
 #include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
 #include <ocs2_core/misc/Benchmark.h>
-#include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
 #include <ocs2_mpc/MPC_MRT_Interface.h>
 
 #include <legged_estimation/StateEstimateBase.h>
@@ -30,6 +29,7 @@
 
 #include "legged_controllers/SafetyChecker.h"
 #include "legged_controllers/visualization/LeggedSelfCollisionVisualization.h"
+#include "legged_reference/visualization/HexapodRobotVisualizer.h"
 
 namespace legged {
 using namespace ocs2;
@@ -80,7 +80,7 @@ class HexapodController : public controller_interface::MultiInterfaceController<
   std::shared_ptr<MPC_MRT_Interface> mpcMrtInterface_;
 
   // Visualization
-  std::shared_ptr<LeggedRobotVisualizer> robotVisualizer_;
+  std::shared_ptr<hexapod_robot::HexapodRobotVisualizer> robotVisualizer_;
   std::shared_ptr<LeggedSelfCollisionVisualization> selfCollisionVisualization_;
   ros::Publisher observationPublisher_;
 

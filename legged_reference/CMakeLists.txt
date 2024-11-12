@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME}
         src/gait/ModeSequenceTemplate.cpp
         src/gait/GaitReceiver.cpp
         src/gait/GaitSchedule.cpp
+        src/visualization/HexapodRobotVisualizer.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}
