@@ -60,13 +60,13 @@ void GaitSchedule::insertModeSequenceTemplate(const ModeSequenceTemplate& modeSe
 
   // add an intermediate stance phase
   scalar_t phaseTransitionStanceTime = phaseTransitionStanceTime_;
-  if (!modeSequence.empty() && modeSequence.back() == ModeNumber::STANCE) {
+  if (!modeSequence.empty() && modeSequence.back() == defaultStanceMode_) {
     phaseTransitionStanceTime = 0.0;
   }
 
   if (phaseTransitionStanceTime > 0.0) {
     eventTimes.push_back(startTime);
-    modeSequence.push_back(ModeNumber::STANCE);
+    modeSequence.push_back(defaultStanceMode_);
   }
 
   // tile the mode sequence template from startTime+phaseTransitionStanceTime to finalTime.
@@ -87,7 +87,7 @@ ModeSchedule GaitSchedule::getModeSchedule(scalar_t lowerBoundTime, scalar_t upp
     modeSequence.erase(modeSequence.begin(), modeSequence.begin() + index - 1);
 
     // set the default initial phase
-    modeSequence.front() = ModeNumber::STANCE;
+    modeSequence.front() = defaultStanceMode_;
   }
 
   // Start tiling at time
@@ -134,7 +134,7 @@ void GaitSchedule::tileModeSequenceTemplate(scalar_t startTime, scalar_t finalTi
   }    // end of while loop
 
   // default final phase
-  modeSequence.push_back(ModeNumber::STANCE);
+  modeSequence.push_back(defaultStanceMode_);
 }
 
 }  // namespace hexapod_robot

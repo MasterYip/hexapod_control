@@ -419,7 +419,7 @@ namespace legged
       std::cerr << "#### =============================================================================\n";
     }
 
-    return std::make_shared<hexapod_robot::GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime);
+    return std::make_shared<hexapod_robot::GaitSchedule>(initModeSchedule, defaultModeSequenceTemplate, modelSettings_.phaseTransitionStanceTime, hexapod_robot::ModeNumber::STANCE);
   }
 
 } // namespace legged
