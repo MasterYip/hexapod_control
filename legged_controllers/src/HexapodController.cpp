@@ -145,38 +145,39 @@ namespace legged
     // State Estimate
     updateStateEstimation(time, period);
     // Update the current state of the system
-    // mpcMrtInterface_->setCurrentObservation(currentObservation_);
+    mpcMrtInterface_->setCurrentObservation(currentObservation_);
 
     // Load the latest MPC policy
-    // mpcMrtInterface_->updatePolicy();
+    mpcMrtInterface_->updatePolicy();
 
     // Evaluate the current policy
     vector_t optimizedState, optimizedInput;
     optimizedState.resize(leggedInterface_->getCentroidalModelInfo().stateDim);
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
-    optimizedState.setZero();
-    optimizedInput.setZero();
-    // Use nominal state to test WBC
-    // POS
-    // optimizedState[6] = measuredRbdState_[0];
-    // optimizedState[7] = measuredRbdState_[1];
-    optimizedState[8] = 0.28;
-    // RPY
-    // optimizedState[9] = measuredRbdState_[3];
-    // optimizedState[10] = measuredRbdState_[4];
-    // optimizedState[11] = measuredRbdState_[5];
-    for (size_t i = 0; i < 6; ++i)
-    {
-      optimizedState[12 + i * 3 + 1] = 1;
-      optimizedState[12 + i * 3 + 2] = 1;
-    }
-    for (size_t i = 0; i < 6; ++i)
-    {
-      optimizedInput[i * 3 + 2] = 20.0;
-    }
+    // optimizedState.setZero();
+    // optimizedInput.setZero();
+    // // Use nominal state to test WBC
+    // // POS
+    // // optimizedState[6] = measuredRbdState_[0];
+    // // optimizedState[7] = measuredRbdState_[1];
+    // optimizedState[8] = 0.28;
+    // // RPY
+    // // optimizedState[9] = measuredRbdState_[3];
+    // // optimizedState[10] = measuredRbdState_[4];
+    // // optimizedState[11] = measuredRbdState_[5];
+    // for (size_t i = 0; i < 6; ++i)
+    // {
+    //   optimizedState[12 + i * 3 + 1] = 1;
+    //   optimizedState[12 + i * 3 + 2] = 1;
+    // }
+    // for (size_t i = 0; i < 6; ++i)
+    // {
+    //   optimizedInput[i * 3 + 2] = 20.0;
+    // }
+
     // The mode that is active at the time the policy is evaluated at.
     size_t plannedMode = 0b111111; // All legs are in stance mode
-    // mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
+    mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
     // Whole body control (parameter definition can be found in the task file)
     currentObservation_.input = optimizedInput;
@@ -201,7 +202,6 @@ namespace legged
 
     vector_t torque = x.tail(18);
     std::cerr << "Torque: " << torque.transpose() << std::endl;
-    // vector_t torque = 10*vector_t::Ones(leggedInterface_->getCentroidalModelInfo().actuatedDofNum);
 
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
@@ -221,12 +221,10 @@ namespace legged
       hybridJointHandles_[j].setCommand(posDes(j), velDes(j), 0.5, 3, torque(j));
     }
 
-    // // Visualization
+    // Visualization
     // robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
     // selfCollisionVisualization_->update(currentObservation_);
 
-    // // Publish the observation. Only needed for the command interface
-    // estimationPub_.publish(ros_msg_conversions::createObservationMsg(currentObservation_));
     ROS_WARN("HexapodController updated.");
   }
 
