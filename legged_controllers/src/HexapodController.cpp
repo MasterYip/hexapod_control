@@ -19,7 +19,7 @@
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/thread_support/ExecuteAndSleep.h>
 #include <ocs2_core/thread_support/SetThreadPriority.h>
-#include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
+// #include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
 #include <ocs2_msgs/mpc_observation.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <ocs2_ros_interfaces/common/RosMsgConversions.h>

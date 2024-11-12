@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ocs2_msgs/mode_schedule.h>
 #include <ocs2_oc/synchronized_module/SolverSynchronizedModule.h>
 
-#include <ocs2_legged_robot/gait/GaitSchedule.h>
+#include "legged_reference/gait/GaitSchedule.h"
 #include "legged_reference/gait/ModeSequenceTemplate.h"
 #include "legged_reference/gait/MotionPhaseDefinition.h"
 
