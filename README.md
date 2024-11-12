@@ -164,6 +164,8 @@ terminate called after throwing an instance of 'std::runtime_error'
   what():  The time of touch-down for the last swing of the EE with ID 4 is not defined.
 ```
 
+Need a better reference generator.
+
 ### Note
 
 - If hexapod_controller DIED, delete `/tme/legged_controller` to regenerate shared library.

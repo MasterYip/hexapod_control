@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME}
         src/gait/ModeSequenceTemplate.cpp
         src/gait/GaitReceiver.cpp
         src/gait/GaitSchedule.cpp
+        src/gait/GaitKeyboardPublisher.cpp
         src/visualization/HexapodRobotVisualizer.cpp
         )
 
@@ -51,19 +52,19 @@ target_link_libraries(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 
 
-# Target trajectories publish node
-# add_executable(legged_target_trajectories_publisher
-#         src/TargetTrajectoriesPublisher.cpp
-#         )
-# add_dependencies(legged_target_trajectories_publisher
-#         ${PROJECT_NAME}
-#         ${catkin_EXPORTED_TARGETS}
-#         )
-# target_link_libraries(legged_target_trajectories_publisher
-#         ${PROJECT_NAME}
-#         ${catkin_LIBRARIES}
-#         )
-# target_compile_options(legged_target_trajectories_publisher PRIVATE ${OCS2_CXX_FLAGS})
+# Hexapod Gait publish node
+add_executable(hexapod_gait_command_publisher
+        src/gait/LeggedRobotGaitCommandNode.cpp
+        )
+add_dependencies(hexapod_gait_command_publisher
+        ${PROJECT_NAME}
+        ${catkin_EXPORTED_TARGETS}
+        )
+target_link_libraries(hexapod_gait_command_publisher
+        ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+        )
+target_compile_options(hexapod_gait_command_publisher PRIVATE ${OCS2_CXX_FLAGS})
 
 #########################
 ###   CLANG TOOLING   ###
