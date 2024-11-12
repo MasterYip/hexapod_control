@@ -62,9 +62,9 @@ namespace ocs2
       void update(const ModeSchedule &modeSchedule, const feet_array_t<scalar_array_t> &liftOffHeightSequence,
                   const feet_array_t<scalar_array_t> &touchDownHeightSequence, const feet_array_t<scalar_array_t> &maxHeightSequence);
 
-      scalar_t getZvelocityConstraint(size_t leg, scalar_t time) const;
+      virtual scalar_t getZvelocityConstraint(size_t leg, scalar_t time) const;
 
-      scalar_t getZpositionConstraint(size_t leg, scalar_t time) const;
+      virtual scalar_t getZpositionConstraint(size_t leg, scalar_t time) const;
 
     protected:
       /**
@@ -133,6 +133,9 @@ namespace ocs2
       void update(const ModeSchedule &modeSchedule, const hexapod_robot::feet_array_t<scalar_array_t> &liftOffHeightSequence,
                   const hexapod_robot::feet_array_t<scalar_array_t> &touchDownHeightSequence, const hexapod_robot::feet_array_t<scalar_array_t> &maxHeightSequence);
 
+      scalar_t getZvelocityConstraint(size_t leg, scalar_t time) const override;
+
+      scalar_t getZpositionConstraint(size_t leg, scalar_t time) const override;
 
     private:
       /**
@@ -142,7 +145,7 @@ namespace ocs2
        */
       hexapod_robot::feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t> &phaseIDsStock) const;
 
-
+      // FIXME: same var name in parent class
       hexapod_robot::feet_array_t<std::vector<SplineCpg>> feetHeightTrajectories_;
       hexapod_robot::feet_array_t<std::vector<scalar_t>> feetHeightTrajectoriesEvents_;
     };

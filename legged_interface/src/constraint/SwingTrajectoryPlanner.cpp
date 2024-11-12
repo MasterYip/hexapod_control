@@ -361,5 +361,17 @@ namespace ocs2
       return contactFlagStock;
     }
 
+    scalar_t HexSwingTrajectoryPlanner::getZvelocityConstraint(size_t leg, scalar_t time) const
+    {
+      const auto index = lookup::findIndexInTimeArray(feetHeightTrajectoriesEvents_[leg], time);
+      return feetHeightTrajectories_[leg][index].velocity(time);
+    }
+
+    scalar_t HexSwingTrajectoryPlanner::getZpositionConstraint(size_t leg, scalar_t time) const
+    {
+      const auto index = lookup::findIndexInTimeArray(feetHeightTrajectoriesEvents_[leg], time);
+      return feetHeightTrajectories_[leg][index].position(time);
+    }
+
   } // namespace legged_robot
 } // namespace ocs2
