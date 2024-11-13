@@ -293,6 +293,7 @@ namespace legged
                                                bool verbose)
   {
     leggedInterface_ = std::make_shared<LeggedHexInterface>(taskFile, urdfFile, referenceFile);
+    // Joint &Frame Name Config
     leggedInterface_->modelSettings().jointNames = {"RF_HAA", "RF_HFE", "RF_KFE",
                                                     "RM_HAA", "RM_HFE", "RM_KFE",
                                                     "RB_HAA", "RB_HFE", "RB_KFE",
