@@ -287,10 +287,6 @@ selfCollision
   ; TODO Self Collision pairs
   collisionLinkPairs
   {
-    [0] "LF_FOOT, RF_FOOT"
-    [1] "LB_FOOT, RB_FOOT"
-    [2] "LF_FOOT, LB_FOOT"
-    [3] "RF_FOOT, RB_FOOT"
   }
 
   minimumDistance  0.05

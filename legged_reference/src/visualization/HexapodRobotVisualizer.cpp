@@ -143,13 +143,9 @@ namespace ocs2
     {
       if (robotStatePublisherPtr_ != nullptr)
       {
-        // clang-format off
         std::map<std::string, scalar_t> jointPositions;
         for (size_t i = 0; i < centroidalModelInfo_.actuatedDofNum; i++)
-        {
           jointPositions[JOINT_NAME[i]] = jointAngles(i);
-        }
-        // clang-format on
         robotStatePublisherPtr_->publishTransforms(jointPositions, timeStamp);
       }
     }
