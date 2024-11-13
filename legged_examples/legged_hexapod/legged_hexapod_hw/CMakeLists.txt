@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
 add_message_files(
     FILES
     JointCmd.msg
+    FootState.msg
 )
 
 generate_messages(

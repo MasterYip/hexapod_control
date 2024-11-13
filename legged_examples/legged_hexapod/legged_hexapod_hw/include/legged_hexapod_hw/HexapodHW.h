@@ -16,6 +16,7 @@
 
 #include <legged_hw/LeggedHW.h>
 #include <legged_hexapod_hw/JointCmd.h>
+#incldue <legged_hexapod_hw/FootState.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/JointState.h>
 namespace legged
@@ -64,21 +65,16 @@ namespace legged
      * @return True when init successful, False when failed.
      */
     bool init(ros::NodeHandle &root_nh, ros::NodeHandle &robot_hw_nh) override;
+
     /** \brief Communicate with hardware. Get data, status of robot.
-     *
-     * Call @ref UNITREE_LEGGED_SDK::UDP::Recv() to get robot's state.
-     *
      * @param time Current time
      * @param period Current time - last time
      */
     void read(const ros::Time &time, const ros::Duration &period) override;
 
     /** \brief Comunicate with hardware. Publish command to robot.
-     *
      * Propagate joint state to actuator state for the stored
-     * transmission. Limit cmd_effort into suitable value. Call @ref UNITREE_LEGGED_SDK::UDP::Recv(). Publish actuator
-     * current state.
-     *
+     * transmission.
      * @param time Current time
      * @param period Current time - last time
      */
@@ -87,6 +83,8 @@ namespace legged
     void jointStateCallback(const sensor_msgs::JointState &msg);
 
     void imuCallback(const sensor_msgs::Imu &msg);
+
+    void footStateCallback(const legged_hexapod_hw::FootState &msg);
 
   private:
     bool setupJoints();
@@ -112,9 +110,14 @@ namespace legged
     ros::Subscriber jointStateSub_;
     sensor_msgs::JointState jointStateMsg_;
     bool jointStateReceived_{false};
+
     ros::Subscriber imuSub_;
     sensor_msgs::Imu imuMsg_;
     bool imuReceived_{false};
+
+    ros::Subscriber footStateSub_;
+    legged_hexapod_hw::FootState footStateMsg_;
+    bool footStateReceived_{false};
 
     // Command
     ros::Publisher jointCmdPub_;

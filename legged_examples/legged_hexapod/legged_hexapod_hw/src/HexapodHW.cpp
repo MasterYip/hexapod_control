@@ -48,6 +48,12 @@ namespace legged
         imuReceived_ = true;
     }
 
+    void HexapodHW::footStateCallback(const legged_hexapod_hw::FootState &msg)
+    {
+        footStateMsg_ = msg;
+        footStateReceived_ = true;
+    }
+
     void HexapodHW::read(const ros::Time &time, const ros::Duration & /*period*/)
     {
         if (jointStateReceived_)
@@ -80,12 +86,16 @@ namespace legged
             imuData_.linearAcc_[1] = imuMsg_.linear_acceleration.y;
             imuData_.linearAcc_[2] = imuMsg_.linear_acceleration.z;
         }
-        // TODO: Update Contact State
-        Eigen::Vector3d legtorque;
-        for (size_t i = 0; i < CONTACT_SENSOR_NAMES.size(); ++i)
+        // TODO: Check accuracy
+        if (footStateReceived_)
         {
-            legtorque << jointData_[i * 3].tau_, jointData_[i * 3 + 1].tau_, jointData_[i * 3 + 2].tau_;
-            contactState_[i] = legtorque.norm() > contactThreshold_;
+            Eigen::Vector3d legtorque;
+            for (size_t i = 0; i < 6; ++i)
+            {
+                legtorque << footStateMsg_.effort[i].x, footStateMsg_.effort[i].y, footStateMsg_.effort[i].z;
+                // contactState_[i] = footStateMsg_.contact[i];
+                contactState_[i] = legtorque.norm() > contactThreshold_;
+            }
         }
 
         // Set feedforward and velocity cmd to zero to avoid for safety when not controller setCommand
