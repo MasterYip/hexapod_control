@@ -14,49 +14,64 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
 
-namespace legged {
-using namespace ocs2;
+namespace legged
+{
+  using namespace ocs2;
 
-class KalmanFilterEstimate : public StateEstimateBase {
- public:
-  KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info, const PinocchioEndEffectorKinematics& eeKinematics);
+  class KalmanFilterEstimate : public StateEstimateBase
+  {
+  public:
+    KalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info, const PinocchioEndEffectorKinematics &eeKinematics);
 
-  vector_t update(const ros::Time& time, const ros::Duration& period) override;
+    vector_t update(const ros::Time &time, const ros::Duration &period) override;
 
-  void loadSettings(const std::string& taskFile, bool verbose);
+    void loadSettings(const std::string &taskFile, bool verbose);
 
- protected:
-  void updateFromTopic();
+  protected:
+    void updateFromTopic();
 
-  void callback(const nav_msgs::Odometry::ConstPtr& msg);
+    void callback(const nav_msgs::Odometry::ConstPtr &msg);
 
-  nav_msgs::Odometry getOdomMsg();
+    nav_msgs::Odometry getOdomMsg();
 
-  vector_t feetHeights_;
+    vector_t feetHeights_;
 
-  // Config
-  scalar_t footRadius_ = 0.02;
-  scalar_t imuProcessNoisePosition_ = 0.02;
-  scalar_t imuProcessNoiseVelocity_ = 0.02;
-  scalar_t footProcessNoisePosition_ = 0.002;
-  scalar_t footSensorNoisePosition_ = 0.005;
-  scalar_t footSensorNoiseVelocity_ = 0.1;
-  scalar_t footHeightSensorNoise_ = 0.01;
+    // Config
+    scalar_t footRadius_ = 0.02;
+    scalar_t imuProcessNoisePosition_ = 0.02;
+    scalar_t imuProcessNoiseVelocity_ = 0.02;
+    scalar_t footProcessNoisePosition_ = 0.002;
+    scalar_t footSensorNoisePosition_ = 0.005;
+    scalar_t footSensorNoiseVelocity_ = 0.1;
+    scalar_t footHeightSensorNoise_ = 0.01;
 
- private:
-  size_t numContacts_, dimContacts_, numState_, numObserve_;
+  private:
+    size_t numContacts_, dimContacts_, numState_, numObserve_;
 
-  matrix_t a_, b_, c_, q_, p_, r_;
-  vector_t xHat_, ps_, vs_;
+    matrix_t a_, b_, c_, q_, p_, r_;
+    vector_t xHat_, ps_, vs_;
 
-  // Topic
-  ros::Subscriber sub_;
-  realtime_tools::RealtimeBuffer<nav_msgs::Odometry> buffer_;
-  tf2_ros::Buffer tfBuffer_;
-  tf2_ros::TransformListener tfListener_;
-  tf2::Transform world2odom_;
-  std::string frameOdom_, frameGuess_;
-  bool topicUpdated_;
-};
+    // Topic
+    ros::Subscriber sub_;
+    realtime_tools::RealtimeBuffer<nav_msgs::Odometry> buffer_;
+    tf2_ros::Buffer tfBuffer_;
+    tf2_ros::TransformListener tfListener_;
+    tf2::Transform world2odom_;
+    std::string frameOdom_, frameGuess_;
+    bool topicUpdated_;
+  };
 
-}  // namespace legged
+  class HexKalmanFilterEstimate : public KalmanFilterEstimate
+  {
+  public:
+    HexKalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info, const PinocchioEndEffectorKinematics &eeKinematics)
+        : KalmanFilterEstimate(pinocchioInterface, info, eeKinematics) {}
+
+    void updateContact(hexapod_robot::contact_flag_t contactFlag) { contactFlag_ = contactFlag; }
+    size_t getMode() override { return hexapod_robot::stanceLeg2ModeNumber(contactFlag_); }
+
+  private:
+    hexapod_robot::contact_flag_t contactFlag_{};
+  };
+
+} // namespace legged

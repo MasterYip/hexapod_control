@@ -355,9 +355,9 @@ namespace legged
 
   void HexapodController::setupStateEstimate(const std::string &taskFile, bool verbose)
   {
-    stateEstimate_ = std::make_shared<KalmanFilterEstimate>(leggedInterface_->getPinocchioInterface(),
+    stateEstimate_ = std::make_shared<HexKalmanFilterEstimate>(leggedInterface_->getPinocchioInterface(),
                                                             leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
-    dynamic_cast<KalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile, verbose);
+    dynamic_cast<HexKalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile, verbose);
     currentObservation_.time = 0;
   }
 

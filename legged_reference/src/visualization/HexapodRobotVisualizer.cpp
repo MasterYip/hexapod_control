@@ -300,24 +300,24 @@ namespace ocs2
       // Extract Com and Feet from state
       std::for_each(mpcStateTrajectory.begin(), mpcStateTrajectory.end(), [&](const vector_t &state)
                     {
-    const auto basePose = centroidal_model::getBasePose(state, centroidalModelInfo_);
+                    const auto basePose = centroidal_model::getBasePose(state, centroidalModelInfo_);
 
-    // Fill com position and pose msgs
-    geometry_msgs::Pose pose;
-    pose.position = getPointMsg(basePose.head<3>());
-    mpcComPositionMsgs.push_back(pose.position);
+                    // Fill com position and pose msgs
+                    geometry_msgs::Pose pose;
+                    pose.position = getPointMsg(basePose.head<3>());
+                    mpcComPositionMsgs.push_back(pose.position);
 
-    // Fill feet msgs
-    const auto& model = pinocchioInterface_.getModel();
-    auto& data = pinocchioInterface_.getData();
-    pinocchio::forwardKinematics(model, data, centroidal_model::getGeneralizedCoordinates(state, centroidalModelInfo_));
-    pinocchio::updateFramePlacements(model, data);
+                    // Fill feet msgs
+                    const auto& model = pinocchioInterface_.getModel();
+                    auto& data = pinocchioInterface_.getData();
+                    pinocchio::forwardKinematics(model, data, centroidal_model::getGeneralizedCoordinates(state, centroidalModelInfo_));
+                    pinocchio::updateFramePlacements(model, data);
 
-    const auto feetPositions = endEffectorKinematicsPtr_->getPosition(state);
-    for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++) {
-      const auto position = getPointMsg(feetPositions[i]);
-      feetMsgs[i].push_back(position);
-    } });
+                    const auto feetPositions = endEffectorKinematicsPtr_->getPosition(state);
+                    for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++) {
+                      const auto position = getPointMsg(feetPositions[i]);
+                      feetMsgs[i].push_back(position);
+                    } });
 
       // Convert feet msgs to Array message
       visualization_msgs::MarkerArray markerArray;

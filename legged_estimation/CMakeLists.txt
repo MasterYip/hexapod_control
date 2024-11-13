@@ -9,6 +9,7 @@ find_package(catkin REQUIRED
         roscpp
         ocs2_legged_robot
         legged_common
+        legged_reference
         realtime_tools
         tf2_ros
         )
@@ -25,6 +26,7 @@ catkin_package(
         roscpp
         ocs2_legged_robot
         legged_common
+        legged_reference
         realtime_tools
         tf2_ros
 )
