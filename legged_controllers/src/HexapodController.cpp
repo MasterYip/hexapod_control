@@ -137,7 +137,6 @@ namespace legged
     ROS_INFO_STREAM("Initial policy has been received.");
     mpcRunning_ = true;
 
-    ROS_WARN("HexapodController started.");
   }
 
   void HexapodController::update(const ros::Time &time, const ros::Duration &period)
@@ -183,13 +182,13 @@ namespace legged
     currentObservation_.input = optimizedInput;
 
     // TODO: use heuristics to generate the desired state and input
-    std::cerr << "Optimized state: " << optimizedState.transpose() << std::endl;
-    std::cerr << "Optimized input: " << optimizedInput.transpose() << std::endl;
-    std::cerr << "Measured state for WBC: " << std::endl
-              << "Pbdy: " << std::setprecision(3)
-              << measuredRbdState_.segment(0, 6).transpose() << std::endl
-              << "JPos: " << std::setprecision(3)
-              << measuredRbdState_.segment(6, 18).transpose() << std::endl;
+    // std::cerr << "Optimized state: " << optimizedState.transpose() << std::endl;
+    // std::cerr << "Optimized input: " << optimizedInput.transpose() << std::endl;
+    // std::cerr << "Measured state for WBC: " << std::endl
+    //           << "Pbdy: " << std::setprecision(3)
+    //           << measuredRbdState_.segment(0, 6).transpose() << std::endl
+    //           << "JPos: " << std::setprecision(3)
+    //           << measuredRbdState_.segment(6, 18).transpose() << std::endl;
 
     // publish measured
     std_msgs::Float64MultiArray msg;
@@ -201,12 +200,12 @@ namespace legged
     wbcTimer_.endTimer();
 
     vector_t torque = x.tail(18);
-    std::cerr << "Torque: " << torque.transpose() << std::endl;
+    // std::cerr << "Torque: " << torque.transpose() << std::endl;
 
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
-    std::cerr << "PosDes: " << posDes.transpose() << std::endl;
-    std::cerr << "VelDes: " << velDes.transpose() << std::endl;
+    // std::cerr << "PosDes: " << posDes.transpose() << std::endl;
+    // std::cerr << "VelDes: " << velDes.transpose() << std::endl;
 
     // // Safety check, if failed, stop the controller
     // if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput))
@@ -225,7 +224,6 @@ namespace legged
     robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
     // selfCollisionVisualization_->update(currentObservation_);
 
-    ROS_WARN("HexapodController updated.");
   }
 
   void HexapodController::updateStateEstimation(const ros::Time &time, const ros::Duration &period)

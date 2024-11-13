@@ -156,6 +156,8 @@ rosrun rqt_controller_manager rqt_controller_manager
   throw `std::bad_alloc` when `HexapodSoftware` is running.
 
 - leg index 4 & 5 do not work properly (last 2 leg in contactNames3DoF)
+  How to find bug:
+  search: `contactPointIndex`, `contactNames3DoF`
 
 ```txt
 Subsystem: 3 out of 3

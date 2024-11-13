@@ -39,12 +39,9 @@ namespace legged
         updateMeasured(rbdStateMeasured);
         updateDesired(stateDesired, inputDesired);
 
-        std::cerr << "WeightedWbcSimple::update" << std::endl;
         // Constraints
-        std::cerr << "Stance legs: " << contactFlagHex_[0] << contactFlagHex_[1] << contactFlagHex_[2] << contactFlagHex_[3] << contactFlagHex_[4] << contactFlagHex_[5] << std::endl;
         Task constraints = formulateConstraints();
         size_t numConstraints = constraints.b_.size() + constraints.f_.size();
-        std::cerr << "Formulate constraints" << std::endl;
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> A(numConstraints, getNumDecisionVars());
         vector_t lbA(numConstraints), ubA(numConstraints); // clang-format off
         A << constraints.a_,
@@ -54,13 +51,11 @@ namespace legged
             -qpOASES::INFTY * vector_t::Ones(constraints.f_.size()); // Inequality constraints
         ubA << constraints.b_,
             constraints.f_; // clang-format on
-        std::cerr << "Load constraints" << std::endl;
 
         // Cost
         Task weighedTask = formulateWeightedTasks(stateDesired, inputDesired, period);
         Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> H = weighedTask.a_.transpose() * weighedTask.a_;
         vector_t g = -weighedTask.a_.transpose() * weighedTask.b_;
-        std::cerr << "Load cost" << std::endl;
 
         // Solve
         auto qpProblem = qpOASES::QProblem(getNumDecisionVars(), numConstraints);
@@ -70,7 +65,6 @@ namespace legged
         options.enableEqualities = qpOASES::BT_TRUE;
         qpProblem.setOptions(options);
         int nWsr = 20;
-        std::cerr << "Init QP" << std::endl;
         qpProblem.init(H.data(), g.data(), A.data(), nullptr, nullptr, lbA.data(), ubA.data(), nWsr);
         vector_t qpSol(getNumDecisionVars());
 
@@ -80,9 +74,7 @@ namespace legged
 
     Task WeightedWbcSimple::formulateConstraints()
     {
-        std::cerr << "WeightedWbcSimple::formulateConstraints" << std::endl;
         return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateFrictionConeTask() + formulateNoContactMotionTask();
-        // return formulateFloatingBaseEomTask() + formulateTorqueLimitsTask() + formulateNoContactMotionTask();
     }
 
     Task WeightedWbcSimple::formulateWeightedTasks(const vector_t &stateDesired, const vector_t &inputDesired, scalar_t period)
