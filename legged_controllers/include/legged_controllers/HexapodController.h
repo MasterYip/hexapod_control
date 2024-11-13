@@ -1,12 +1,12 @@
 /**
  * @file HexapodController.h
  * @author Master Yip (2205929492@qq.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2024-03-20
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 
 //
@@ -31,69 +31,71 @@
 #include "legged_controllers/visualization/LeggedSelfCollisionVisualization.h"
 #include "legged_reference/visualization/HexapodRobotVisualizer.h"
 
-namespace legged {
-using namespace ocs2;
-using namespace legged_robot;
+namespace legged
+{
+  using namespace ocs2;
+  using namespace legged_robot;
 
-class HexapodController : public controller_interface::MultiInterfaceController<HybridJointInterface, hardware_interface::ImuSensorInterface,
-                                                                               ContactSensorInterface> {
- public:
-  HexapodController() = default;
-  ~HexapodController() override;
-  bool init(hardware_interface::RobotHW* robot_hw, ros::NodeHandle& controller_nh) override;
-  void update(const ros::Time& time, const ros::Duration& period) override;
-  void starting(const ros::Time& time) override;
-  void stopping(const ros::Time& /*time*/) override { mpcRunning_ = false; }
+  class HexapodController : public controller_interface::MultiInterfaceController<HybridJointInterface, hardware_interface::ImuSensorInterface,
+                                                                                  ContactSensorInterface>
+  {
+  public:
+    HexapodController() = default;
+    ~HexapodController() override;
+    bool init(hardware_interface::RobotHW *robot_hw, ros::NodeHandle &controller_nh) override;
+    void update(const ros::Time &time, const ros::Duration &period) override;
+    void starting(const ros::Time &time) override;
+    void stopping(const ros::Time & /*time*/) override { mpcRunning_ = false; }
 
-  //Debug
-  ros::Publisher estimationPub_;
-  
+    // Debug
+    ros::Publisher debugPub_;
 
- protected:
-  virtual void updateStateEstimation(const ros::Time& time, const ros::Duration& period);
+  protected:
+    virtual void updateStateEstimation(const ros::Time &time, const ros::Duration &period);
 
-  virtual void setupLeggedInterface(const std::string& taskFile, const std::string& urdfFile, const std::string& referenceFile,
-                                    bool verbose);
-  virtual void setupMpc();
-  virtual void setupMrt();
-  virtual void setupStateEstimate(const std::string& taskFile, bool verbose);
+    virtual void setupLeggedInterface(const std::string &taskFile, const std::string &urdfFile, const std::string &referenceFile,
+                                      bool verbose);
+    virtual void setupMpc();
+    virtual void setupMrt();
+    virtual void setupStateEstimate(const std::string &taskFile, bool verbose);
 
-  // Interface
-  std::shared_ptr<LeggedHexInterface> leggedInterface_;
-  std::shared_ptr<PinocchioEndEffectorKinematics> eeKinematicsPtr_;
-  std::vector<HybridJointHandle> hybridJointHandles_;
-  std::vector<ContactSensorHandle> contactHandles_;
-  hardware_interface::ImuSensorHandle imuSensorHandle_;
+    // Interface
+    std::shared_ptr<LeggedHexInterface> leggedInterface_;
+    std::shared_ptr<PinocchioEndEffectorKinematics> eeKinematicsPtr_;
+    std::vector<HybridJointHandle> hybridJointHandles_;
+    std::vector<ContactSensorHandle> contactHandles_;
+    hardware_interface::ImuSensorHandle imuSensorHandle_;
 
-  // State Estimation
-  SystemObservation currentObservation_;
-  vector_t measuredRbdState_;
-  std::shared_ptr<StateEstimateBase> stateEstimate_;
-  std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
+    // State Estimation
+    SystemObservation currentObservation_;
+    vector_t measuredRbdState_;
+    std::shared_ptr<StateEstimateBase> stateEstimate_;
+    std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
 
-  // Whole Body Control
-  std::shared_ptr<WbcBase> wbc_;
-  std::shared_ptr<SafetyChecker> safetyChecker_;
+    // Whole Body Control
+    std::shared_ptr<WbcBase> wbc_;
+    std::shared_ptr<SafetyChecker> safetyChecker_;
 
-  // Nonlinear MPC
-  std::shared_ptr<MPC_BASE> mpc_;
-  std::shared_ptr<MPC_MRT_Interface> mpcMrtInterface_;
+    // Nonlinear MPC
+    std::shared_ptr<MPC_BASE> mpc_;
+    std::shared_ptr<MPC_MRT_Interface> mpcMrtInterface_;
 
-  // Visualization
-  std::shared_ptr<hexapod_robot::HexapodRobotVisualizer> robotVisualizer_;
-  std::shared_ptr<LeggedSelfCollisionVisualization> selfCollisionVisualization_;
-  ros::Publisher observationPublisher_;
+    // Visualization
+    std::shared_ptr<hexapod_robot::HexapodRobotVisualizer> robotVisualizer_;
+    std::shared_ptr<LeggedSelfCollisionVisualization> selfCollisionVisualization_;
+    ros::Publisher observationPublisher_;
 
- private:
-  std::thread mpcThread_;
-  std::atomic_bool controllerRunning_{}, mpcRunning_{};
-  benchmark::RepeatedTimer mpcTimer_;
-  benchmark::RepeatedTimer wbcTimer_;
-};
+  private:
+    std::thread mpcThread_;
+    std::atomic_bool controllerRunning_{}, mpcRunning_{};
+    benchmark::RepeatedTimer mpcTimer_;
+    benchmark::RepeatedTimer wbcTimer_;
+  };
 
-class HexapodCheaterController : public HexapodController {
- protected:
-  void setupStateEstimate(const std::string& taskFile, bool verbose) override;
-};
+  class HexapodCheaterController : public HexapodController
+  {
+  protected:
+    void setupStateEstimate(const std::string &taskFile, bool verbose) override;
+  };
 
-}  // namespace legged
+} // namespace legged

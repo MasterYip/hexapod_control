@@ -68,7 +68,7 @@ namespace legged
     eeKinematicsPtr_ = std::make_shared<PinocchioEndEffectorKinematics>(leggedInterface_->getPinocchioInterface(), pinocchioMapping,
                                                                         leggedInterface_->modelSettings().contactNames3DoF);
     robotVisualizer_ = std::make_shared<hexapod_robot::HexapodRobotVisualizer>(leggedInterface_->getPinocchioInterface(),
-                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
+                                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_, nh);
     selfCollisionVisualization_.reset(new LeggedSelfCollisionVisualization(leggedInterface_->getPinocchioInterface(),
                                                                            leggedInterface_->getGeometryInterface(), pinocchioMapping, nh));
 
@@ -103,7 +103,7 @@ namespace legged
     safetyChecker_ = std::make_shared<SafetyChecker>(leggedInterface_->getCentroidalModelInfo());
 
     // Debug
-    estimationPub_ = controller_nh.advertise<std_msgs::Float64MultiArray>("RbdEstimation", 1);
+    debugPub_ = controller_nh.advertise<std_msgs::Float64MultiArray>("RbdEstimation", 1);
 
     ROS_WARN("HexapodController initialized.");
     ROS_WARN("State Num: %d", leggedInterface_->getCentroidalModelInfo().stateDim);
@@ -136,7 +136,6 @@ namespace legged
     }
     ROS_INFO_STREAM("Initial policy has been received.");
     mpcRunning_ = true;
-
   }
 
   void HexapodController::update(const ros::Time &time, const ros::Duration &period)
@@ -193,7 +192,7 @@ namespace legged
     // publish measured
     std_msgs::Float64MultiArray msg;
     msg.data = std::vector<double>(measuredRbdState_.data(), measuredRbdState_.data() + measuredRbdState_.size());
-    estimationPub_.publish(msg);
+    debugPub_.publish(msg);
 
     wbcTimer_.startTimer();
     vector_t x = wbc_->update(optimizedState, optimizedInput, measuredRbdState_, plannedMode, period.toSec());
@@ -224,6 +223,8 @@ namespace legged
     robotVisualizer_->update(currentObservation_, mpcMrtInterface_->getPolicy(), mpcMrtInterface_->getCommand());
     // selfCollisionVisualization_->update(currentObservation_);
 
+    // Publish the observation. Only needed for the command interface
+    observationPublisher_.publish(ros_msg_conversions::createObservationMsg(currentObservation_));
   }
 
   void HexapodController::updateStateEstimation(const ros::Time &time, const ros::Duration &period)
@@ -320,7 +321,7 @@ namespace legged
     rosReferenceManagerPtr->subscribe(nh);
     mpc_->getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
     mpc_->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
-    estimationPub_ = nh.advertise<ocs2_msgs::mpc_observation>(robotName + "_mpc_observation", 1);
+    observationPublisher_ = nh.advertise<ocs2_msgs::mpc_observation>(robotName + "_mpc_observation", 1);
   }
 
   void HexapodController::setupMrt()
