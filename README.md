@@ -155,7 +155,7 @@ rosrun rqt_controller_manager rqt_controller_manager
 - `HexapodSoftware` confilct with one of `legged_control` deps (ocs2/hpp-fcl/pinocchio)
   throw `std::bad_alloc` when `HexapodSoftware` is running.
 
-- `GaitReceiver` in ocs2 default received gait is four-legged stance, which is not suitable for hexapod.
+- leg index 4 & 5 do not work properly (last 2 leg in contactNames3DoF)
 
 ```txt
 Subsystem: 3 out of 3
