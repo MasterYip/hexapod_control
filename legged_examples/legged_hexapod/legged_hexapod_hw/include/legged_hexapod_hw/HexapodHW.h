@@ -16,7 +16,7 @@
 
 #include <legged_hw/LeggedHW.h>
 #include <legged_hexapod_hw/JointCmd.h>
-#incldue <legged_hexapod_hw/FootState.h>
+#include <legged_hexapod_hw/FootState.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/JointState.h>
 namespace legged

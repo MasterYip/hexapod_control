@@ -8,6 +8,8 @@ find_package(Eigen3 REQUIRED)
 find_package(catkin REQUIRED
     COMPONENTS
     roscpp
+    std_msgs
+    geometry_msgs
     legged_hw
     message_generation
 )
@@ -21,6 +23,7 @@ add_message_files(
 generate_messages(
     DEPENDENCIES
     std_msgs
+    geometry_msgs
 )
 
 catkin_package(
