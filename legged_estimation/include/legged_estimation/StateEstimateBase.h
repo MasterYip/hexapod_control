@@ -31,6 +31,7 @@ namespace legged
     StateEstimateBase(PinocchioInterface pinocchioInterface, CentroidalModelInfo info, const PinocchioEndEffectorKinematics &eeKinematics);
     virtual void updateJointStates(const vector_t &jointPos, const vector_t &jointVel);
     virtual void updateContact(contact_flag_t contactFlag) { contactFlag_ = contactFlag; }
+    virtual void updateContact(hexapod_robot::contact_flag_t contactFlag) { std::cerr << "not implemented" << std::endl; };
     virtual void updateImu(const Eigen::Quaternion<scalar_t> &quat, const vector3_t &angularVelLocal, const vector3_t &linearAccelLocal,
                            const matrix3_t &orientationCovariance, const matrix3_t &angularVelCovariance,
                            const matrix3_t &linearAccelCovariance);

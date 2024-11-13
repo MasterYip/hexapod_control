@@ -230,9 +230,9 @@ namespace legged
   void HexapodController::updateStateEstimation(const ros::Time &time, const ros::Duration &period)
   {
     vector_t jointPos(hybridJointHandles_.size()), jointVel(hybridJointHandles_.size());
-    contact_flag_t contacts;
+    hexapod_robot::contact_flag_t contacts;
     Eigen::Quaternion<scalar_t> quat;
-    contact_flag_t contactFlag;
+    hexapod_robot::contact_flag_t contactFlag;
     vector3_t angularVel, linearAccel;
     matrix3_t orientationCovariance, angularVelCovariance, linearAccelCovariance;
 

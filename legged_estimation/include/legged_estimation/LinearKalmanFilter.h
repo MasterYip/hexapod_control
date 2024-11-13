@@ -67,7 +67,7 @@ namespace legged
     HexKalmanFilterEstimate(PinocchioInterface pinocchioInterface, CentroidalModelInfo info, const PinocchioEndEffectorKinematics &eeKinematics)
         : KalmanFilterEstimate(pinocchioInterface, info, eeKinematics) {}
 
-    void updateContact(hexapod_robot::contact_flag_t contactFlag) { contactFlag_ = contactFlag; }
+    void updateContact(hexapod_robot::contact_flag_t contactFlag) override { contactFlag_ = contactFlag; }
     size_t getMode() override { return hexapod_robot::stanceLeg2ModeNumber(contactFlag_); }
 
   private:
