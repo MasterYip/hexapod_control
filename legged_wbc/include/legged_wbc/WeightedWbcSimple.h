@@ -37,7 +37,7 @@ namespace legged
 
   private:
     scalar_t weightSwingLeg_, weightBaseAccel_, weightContactForce_;
-    hex_contact_flag_t contactFlagHex_{}; // Hexapod
+    hexapod_robot::contact_flag_t contactFlagHex_{}; // Hexapod
   };
 
 } // namespace legged
