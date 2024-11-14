@@ -25,7 +25,6 @@
             controllers/hexapod_controller
     "/>
 
-    <!-- BUG: do not support hexapod -->
     <node pkg="legged_reference" type="hexapod_gait_command_publisher" name="hexapod_gait_command_publisher" output="screen"/>
 
     <node pkg="legged_controllers" type="legged_target_trajectories_publisher" name="legged_robot_target" output="screen"/>

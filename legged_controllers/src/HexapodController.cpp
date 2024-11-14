@@ -152,26 +152,6 @@ namespace legged
     vector_t optimizedState, optimizedInput;
     optimizedState.resize(leggedInterface_->getCentroidalModelInfo().stateDim);
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
-    // optimizedState.setZero();
-    // optimizedInput.setZero();
-    // // Use nominal state to test WBC
-    // // POS
-    // // optimizedState[6] = measuredRbdState_[0];
-    // // optimizedState[7] = measuredRbdState_[1];
-    // optimizedState[8] = 0.28;
-    // // RPY
-    // // optimizedState[9] = measuredRbdState_[3];
-    // // optimizedState[10] = measuredRbdState_[4];
-    // // optimizedState[11] = measuredRbdState_[5];
-    // for (size_t i = 0; i < 6; ++i)
-    // {
-    //   optimizedState[12 + i * 3 + 1] = 1;
-    //   optimizedState[12 + i * 3 + 2] = 1;
-    // }
-    // for (size_t i = 0; i < 6; ++i)
-    // {
-    //   optimizedInput[i * 3 + 2] = 20.0;
-    // }
 
     // The mode that is active at the time the policy is evaluated at.
     size_t plannedMode = 0b111111; // All legs are in stance mode
@@ -179,15 +159,6 @@ namespace legged
 
     // Whole body control (parameter definition can be found in the task file)
     currentObservation_.input = optimizedInput;
-
-    // TODO: use heuristics to generate the desired state and input
-    // std::cerr << "Optimized state: " << optimizedState.transpose() << std::endl;
-    // std::cerr << "Optimized input: " << optimizedInput.transpose() << std::endl;
-    // std::cerr << "Measured state for WBC: " << std::endl
-    //           << "Pbdy: " << std::setprecision(3)
-    //           << measuredRbdState_.segment(0, 6).transpose() << std::endl
-    //           << "JPos: " << std::setprecision(3)
-    //           << measuredRbdState_.segment(6, 18).transpose() << std::endl;
 
     // publish measured
     std_msgs::Float64MultiArray msg;
@@ -199,12 +170,9 @@ namespace legged
     wbcTimer_.endTimer();
 
     vector_t torque = x.tail(18);
-    // std::cerr << "Torque: " << torque.transpose() << std::endl;
 
     vector_t posDes = centroidal_model::getJointAngles(optimizedState, leggedInterface_->getCentroidalModelInfo());
     vector_t velDes = centroidal_model::getJointVelocities(optimizedInput, leggedInterface_->getCentroidalModelInfo());
-    // std::cerr << "PosDes: " << posDes.transpose() << std::endl;
-    // std::cerr << "VelDes: " << velDes.transpose() << std::endl;
 
     // // Safety check, if failed, stop the controller
     // if (!safetyChecker_->check(currentObservation_, optimizedState, optimizedInput))
