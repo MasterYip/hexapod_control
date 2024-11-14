@@ -112,6 +112,7 @@ namespace ocs2
       const Config config_;
       const size_t numFeet_;
 
+    private:
       feet_array_t<std::vector<SplineCpg>> feetHeightTrajectories_;
       feet_array_t<std::vector<scalar_t>> feetHeightTrajectoriesEvents_;
     };
@@ -122,7 +123,6 @@ namespace ocs2
     class HexSwingTrajectoryPlanner : public SwingTrajectoryPlanner
     {
     public:
-
       HexSwingTrajectoryPlanner(Config config, size_t numFeet);
 
       void update(const ModeSchedule &modeSchedule, scalar_t terrainHeight) override;

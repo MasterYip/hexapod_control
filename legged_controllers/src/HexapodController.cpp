@@ -41,6 +41,13 @@
 
 namespace legged
 {
+  const std::vector<std::string> JOINT_NAME = {"aRF_HAA", "aRF_HFE", "aRF_KFE",
+                                               "bRM_HAA", "bRM_HFE", "bRM_KFE",
+                                               "cRB_HAA", "cRB_HFE", "cRB_KFE",
+                                               "dLF_HAA", "dLF_HFE", "dLF_KFE",
+                                               "eLM_HAA", "eLM_HFE", "eLM_KFE",
+                                               "fLB_HAA", "fLB_HFE", "fLB_KFE"};
+
   bool HexapodController::init(hardware_interface::RobotHW *robot_hw, ros::NodeHandle &controller_nh)
   {
 
@@ -74,13 +81,7 @@ namespace legged
 
     // Hardware interface
     auto *hybridJointInterface = robot_hw->get<HybridJointInterface>();
-    std::vector<std::string> joint_names{"aRF_HAA", "aRF_HFE", "aRF_KFE",
-                                         "bRM_HAA", "bRM_HFE", "bRM_KFE",
-                                         "cRB_HAA", "cRB_HFE", "cRB_KFE",
-                                         "dLF_HAA", "dLF_HFE", "dLF_KFE",
-                                         "eLM_HAA", "eLM_HFE", "eLM_KFE",
-                                         "fLB_HAA", "fLB_HFE", "fLB_KFE"};
-    for (const auto &joint_name : joint_names)
+    for (const auto &joint_name : JOINT_NAME)
     {
       hybridJointHandles_.push_back(hybridJointInterface->getHandle(joint_name));
     }
@@ -154,7 +155,7 @@ namespace legged
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
 
     // The mode that is active at the time the policy is evaluated at.
-    size_t plannedMode = 0b111111; // All legs are in stance mode
+    size_t plannedMode = hexapod_robot::ModeNumber::STANCE; // All legs are in stance mode
     mpcMrtInterface_->evaluatePolicy(currentObservation_.time, currentObservation_.state, optimizedState, optimizedInput, plannedMode);
 
     // Whole body control (parameter definition can be found in the task file)
@@ -261,12 +262,7 @@ namespace legged
   {
     leggedInterface_ = std::make_shared<LeggedHexInterface>(taskFile, urdfFile, referenceFile);
     // Joint &Frame Name Config
-    leggedInterface_->modelSettings().jointNames = {"aRF_HAA", "aRF_HFE", "aRF_KFE",
-                                                    "bRM_HAA", "bRM_HFE", "bRM_KFE",
-                                                    "cRB_HAA", "cRB_HFE", "cRB_KFE",
-                                                    "dLF_HAA", "dLF_HFE", "dLF_KFE",
-                                                    "eLM_HAA", "eLM_HFE", "eLM_KFE",
-                                                    "fLB_HAA", "fLB_HFE", "fLB_KFE"};
+    leggedInterface_->modelSettings().jointNames = JOINT_NAME;
     leggedInterface_->modelSettings().contactNames3DoF = {"aRF_FOOT", "bRM_FOOT", "cRB_FOOT",
                                                           "dLF_FOOT", "eLM_FOOT", "fLB_FOOT"};
     leggedInterface_->setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);

@@ -3,7 +3,7 @@ targetRotationVelocity              1.57;
 
 comHeight                           0.28
 
-defaultJointState_comment
+defaultJointState
 {
    (0,0)  0.0   ; RF_HAA
    (1,0)  1.0   ; RF_HFE
@@ -25,7 +25,7 @@ defaultJointState_comment
    (17,0) 1.0   ; LB_KFE
 }
 
-defaultJointState
+defaultJointState_comment
 {
    (0,0)  0.0   ; RF_HAA
    (1,0)  0.0   ; RF_HFE
