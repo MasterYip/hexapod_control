@@ -23,17 +23,15 @@ namespace legged
 {
 
   // Define JOINT_STATE_NAME and FOOT_LINK_NAME constants
-  const std::vector<std::string> JOINT_NAME = {"RF_HAA", "RF_HFE", "RF_KFE",
-                                               "RM_HAA", "RM_HFE", "RM_KFE",
-                                               "RB_HAA", "RB_HFE", "RB_KFE",
-                                               "LF_HAA", "LF_HFE", "LF_KFE",
-                                               "LM_HAA", "LM_HFE", "LM_KFE",
-                                               "LB_HAA", "LB_HFE", "LB_KFE"};
+  const std::vector<std::string> JOINT_NAME = {"aRF_HAA", "aRF_HFE", "aRF_KFE",
+                                               "bRM_HAA", "bRM_HFE", "bRM_KFE",
+                                               "cRB_HAA", "cRB_HFE", "cRB_KFE",
+                                               "dLF_HAA", "dLF_HFE", "dLF_KFE",
+                                               "eLM_HAA", "eLM_HFE", "eLM_KFE",
+                                               "fLB_HAA", "fLB_HFE", "fLB_KFE"};
 
-  const std::vector<std::string> CONTACT_SENSOR_NAMES = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
-                                                         "LF_FOOT", "LM_FOOT", "LB_FOOT"};
-
-  // const std::vector<std::string> CONTACT_SENSOR_NAMES = {"RF_FOOT", "LF_FOOT", "RH_FOOT", "LH_FOOT"};
+  const std::vector<std::string> CONTACT_SENSOR_NAMES = {"aRF_FOOT", "bRM_FOOT", "cRB_FOOT",
+                                                         "dLF_FOOT", "eLM_FOOT", "fLB_FOOT"};
 
   struct UnitreeMotorData
   {
