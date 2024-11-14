@@ -66,8 +66,14 @@ namespace legged
     std::vector<ContactSensorHandle> contactHandles_;
     hardware_interface::ImuSensorHandle imuSensorHandle_;
 
+    std::vector<int> normal2AlphaBet = {4, 5, 3, 1, 2, 0};
+    std::vector<int> alphaBet2Normal = {5, 3, 4, 2, 0, 1};
+
     // State Estimation
+    // Order: vel3 omg3 pos3 rpy3 | joint_pos18(AlphaBet: ['LB', 'LF', 'LM', 'RB', 'RF', 'RM'])
     SystemObservation currentObservation_;
+    //pos3 rpy3 joint_pos18 ["RF", "RM", "RB", "LF", "LM", "LB"]
+    //vel3 drpy3 joint_vel18 ["RF", "RM", "RB", "LF", "LM", "LB"]
     vector_t measuredRbdState_;
     std::shared_ptr<StateEstimateBase> stateEstimate_;
     std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;

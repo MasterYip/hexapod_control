@@ -120,6 +120,9 @@ namespace legged
     ros::Subscriber jointStateSub_;
     sensor_msgs::JointState jointStateMsg_;
     bool jointStateReceived_{false};
+    std::vector<int> normal2AlphaBet = {4, 5, 3, 1, 2, 0};
+    // std::vector<int> alphaBet2Normal = {5, 3, 4, 2, 0, 1};
+
 
     ros::Subscriber imuSub_;
     sensor_msgs::Imu imuMsg_;

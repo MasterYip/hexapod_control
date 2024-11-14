@@ -58,18 +58,19 @@ namespace legged
     {
         if (jointStateReceived_)
         {
-            for (size_t i = 0; i < 6; ++i)
+            for (size_t j = 0; j < 6; ++j)
             {
+                size_t i = normal2AlphaBet[j];
                 // Convert from HexapodSoftware Style to URDF Style
-                jointData_[3*i].pos_ = jointStateMsg_.position[3*i];
-                jointData_[3*i].vel_ = jointStateMsg_.velocity[3*i];
-                jointData_[3*i].tau_ = jointStateMsg_.effort[3*i];
-                jointData_[3*i+1].pos_ = -jointStateMsg_.position[3*i+1] + M_PI / 2;
-                jointData_[3*i+1].vel_ = -jointStateMsg_.velocity[3*i+1];
-                jointData_[3*i+1].tau_ = -jointStateMsg_.effort[3*i+1];
-                jointData_[3*i+2].pos_ = jointStateMsg_.position[3*i+2] + M_PI;
-                jointData_[3*i+2].vel_ = jointStateMsg_.velocity[3*i+2];
-                jointData_[3*i+2].tau_ = jointStateMsg_.effort[3*i+2];
+                jointData_[3*i].pos_ = jointStateMsg_.position[3*j];
+                jointData_[3*i].vel_ = jointStateMsg_.velocity[3*j];
+                jointData_[3*i].tau_ = jointStateMsg_.effort[3*j];
+                jointData_[3*i+1].pos_ = -jointStateMsg_.position[3*j+1] + M_PI / 2;
+                jointData_[3*i+1].vel_ = -jointStateMsg_.velocity[3*j+1];
+                jointData_[3*i+1].tau_ = -jointStateMsg_.effort[3*j+1];
+                jointData_[3*i+2].pos_ = jointStateMsg_.position[3*j+2] + M_PI;
+                jointData_[3*i+2].vel_ = jointStateMsg_.velocity[3*j+2];
+                jointData_[3*i+2].tau_ = jointStateMsg_.effort[3*j+2];
             }
         }
 
