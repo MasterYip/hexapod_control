@@ -48,10 +48,14 @@ namespace ocs2
     using namespace legged_robot;
     
     enum ModeNumber
-    { // leg index 543210(LB LM LF RB RM RF) - 0b000000
+    { 
+      // leg index(normal) 543210(LB LM LF RB RM RF) - 0b000000
+      // leg index(alpha) (RM RF RB LM LF LB)
       FLY = 0b000000,
-      TRIPOD1 = 0b010101,
-      TRIPOD2 = 0b101010,
+      TRIPOD1 = 0b100011,
+      TRIPOD2 = 0b011100,
+      // TRIPOD1 = 0b010101,
+      // TRIPOD2 = 0b101010,
       STANCE = 0b111111,
     };
 
