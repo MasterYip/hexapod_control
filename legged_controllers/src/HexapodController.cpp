@@ -152,26 +152,6 @@ namespace legged
     vector_t optimizedState, optimizedInput;
     optimizedState.resize(leggedInterface_->getCentroidalModelInfo().stateDim);
     optimizedInput.resize(leggedInterface_->getCentroidalModelInfo().inputDim);
-    // optimizedState.setZero();
-    // optimizedInput.setZero();
-    // // Use nominal state to test WBC
-    // // POS
-    // // optimizedState[6] = measuredRbdState_[0];
-    // // optimizedState[7] = measuredRbdState_[1];
-    // optimizedState[8] = 0.28;
-    // // RPY
-    // // optimizedState[9] = measuredRbdState_[3];
-    // // optimizedState[10] = measuredRbdState_[4];
-    // // optimizedState[11] = measuredRbdState_[5];
-    // for (size_t i = 0; i < 6; ++i)
-    // {
-    //   optimizedState[12 + i * 3 + 1] = 1;
-    //   optimizedState[12 + i * 3 + 2] = 1;
-    // }
-    // for (size_t i = 0; i < 6; ++i)
-    // {
-    //   optimizedInput[i * 3 + 2] = 20.0;
-    // }
 
     // The mode that is active at the time the policy is evaluated at.
     size_t plannedMode = 0b111111; // All legs are in stance mode
@@ -179,15 +159,6 @@ namespace legged
 
     // Whole body control (parameter definition can be found in the task file)
     currentObservation_.input = optimizedInput;
-
-    // TODO: use heuristics to generate the desired state and input
-    // std::cerr << "Optimized state: " << optimizedState.transpose() << std::endl;
-    // std::cerr << "Optimized input: " << optimizedInput.transpose() << std::endl;
-    // std::cerr << "Measured state for WBC: " << std::endl
-    //           << "Pbdy: " << std::setprecision(3)
-    //           << measuredRbdState_.segment(0, 6).transpose() << std::endl
-    //           << "JPos: " << std::setprecision(3)
-    //           << measuredRbdState_.segment(6, 18).transpose() << std::endl;
 
     // publish measured
     std_msgs::Float64MultiArray msg;
@@ -266,9 +237,29 @@ namespace legged
     measuredRbdState_ = stateEstimate_->update(time, period);
     currentObservation_.time += period.toSec();
     scalar_t yawLast = currentObservation_.state(9);
-    currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
+    currentObservation_.state = obs2MpcObsRemap(rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_));
     currentObservation_.state(9) = yawLast + angles::shortest_angular_distance(yawLast, currentObservation_.state(9));
     currentObservation_.mode = stateEstimate_->getMode();
+  }
+
+  vector_t HexapodController::obs2MpcObsRemap(const vector_t &obs)
+  {
+    vector_t remappedObs = obs;
+    for (size_t i = 0; i < 6; ++i)
+    {
+      remappedObs.segment(12 + 3 * normal2AlphaBet[i], 3) = obs.segment(12 + 3 * i, 3);
+    }
+    return remappedObs;
+  }
+
+  vector_t HexapodController::mpcObs2ObsRemap(const vector_t &obs)
+  {
+    vector_t remappedObs = obs;
+    for (size_t i = 0; i < 6; ++i)
+    {
+      remappedObs.segment(12 + 3 * alphaBet2Normal[i], 3) = obs.segment(12 + 3 * i, 3);
+    }
+    return remappedObs;
   }
 
   HexapodController::~HexapodController()
@@ -356,7 +347,7 @@ namespace legged
   void HexapodController::setupStateEstimate(const std::string &taskFile, bool verbose)
   {
     stateEstimate_ = std::make_shared<HexKalmanFilterEstimate>(leggedInterface_->getPinocchioInterface(),
-                                                            leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
+                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
     dynamic_cast<HexKalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile, verbose);
     currentObservation_.time = 0;
   }

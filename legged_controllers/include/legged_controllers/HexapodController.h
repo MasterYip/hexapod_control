@@ -58,13 +58,17 @@ namespace legged
     virtual void setupMpc();
     virtual void setupMrt();
     virtual void setupStateEstimate(const std::string &taskFile, bool verbose);
-
+    vector_t obs2MpcObsRemap(const vector_t &obs);
+    vector_t mpcObs2ObsRemap(const vector_t &obs);
     // Interface
     std::shared_ptr<LeggedHexInterface> leggedInterface_;
     std::shared_ptr<PinocchioEndEffectorKinematics> eeKinematicsPtr_;
     std::vector<HybridJointHandle> hybridJointHandles_;
     std::vector<ContactSensorHandle> contactHandles_;
     hardware_interface::ImuSensorHandle imuSensorHandle_;
+
+    std::vector<int> normal2AlphaBet = {4, 5, 3, 1, 2, 0};
+    std::vector<int> alphaBet2Normal = {5, 3, 4, 2, 0, 1};
 
     // State Estimation
     SystemObservation currentObservation_;
