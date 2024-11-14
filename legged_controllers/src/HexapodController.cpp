@@ -74,13 +74,7 @@ namespace legged
 
     // Hardware interface
     auto *hybridJointInterface = robot_hw->get<HybridJointInterface>();
-    std::vector<std::string> joint_names{"RF_HAA", "RF_HFE", "RF_KFE",
-                                         "RM_HAA", "RM_HFE", "RM_KFE",
-                                         "RB_HAA", "RB_HFE", "RB_KFE",
-                                         "LF_HAA", "LF_HFE", "LF_KFE",
-                                         "LM_HAA", "LM_HFE", "LM_KFE",
-                                         "LB_HAA", "LB_HFE", "LB_KFE"};
-    for (const auto &joint_name : joint_names)
+    for (const auto &joint_name : leggedInterface_->modelSettings().jointNames)
     {
       hybridJointHandles_.push_back(hybridJointInterface->getHandle(joint_name));
     }
@@ -293,14 +287,24 @@ namespace legged
   {
     leggedInterface_ = std::make_shared<LeggedHexInterface>(taskFile, urdfFile, referenceFile);
     // Joint &Frame Name Config
-    leggedInterface_->modelSettings().jointNames = {"RF_HAA", "RF_HFE", "RF_KFE",
-                                                    "RM_HAA", "RM_HFE", "RM_KFE",
-                                                    "RB_HAA", "RB_HFE", "RB_KFE",
+    // 1. Normal Order
+    // leggedInterface_->modelSettings().jointNames = {"RF_HAA", "RF_HFE", "RF_KFE",
+    //                                                 "RM_HAA", "RM_HFE", "RM_KFE",
+    //                                                 "RB_HAA", "RB_HFE", "RB_KFE",
+    //                                                 "LF_HAA", "LF_HFE", "LF_KFE",
+    //                                                 "LM_HAA", "LM_HFE", "LM_KFE",
+    //                                                 "LB_HAA", "LB_HFE", "LB_KFE"};
+    // leggedInterface_->modelSettings().contactNames3DoF = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
+    //                                                       "LF_FOOT", "LM_FOOT", "LB_FOOT"};
+    // 2. Alphabetical Order
+    leggedInterface_->modelSettings().jointNames = {"LB_HAA", "LB_HFE", "LB_KFE",
                                                     "LF_HAA", "LF_HFE", "LF_KFE",
                                                     "LM_HAA", "LM_HFE", "LM_KFE",
-                                                    "LB_HAA", "LB_HFE", "LB_KFE"};
-    leggedInterface_->modelSettings().contactNames3DoF = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
-                                                          "LF_FOOT", "LM_FOOT", "LB_FOOT"};
+                                                    "RB_HAA", "RB_HFE", "RB_KFE",
+                                                    "RF_HAA", "RF_HFE", "RF_KFE",
+                                                    "RM_HAA", "RM_HFE", "RM_KFE"};
+    leggedInterface_->modelSettings().contactNames3DoF = {"LB_FOOT", "LF_FOOT", "LM_FOOT",
+                                                          "RB_FOOT", "RF_FOOT", "RM_FOOT"};
     leggedInterface_->setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
   }
 
@@ -356,7 +360,7 @@ namespace legged
   void HexapodController::setupStateEstimate(const std::string &taskFile, bool verbose)
   {
     stateEstimate_ = std::make_shared<HexKalmanFilterEstimate>(leggedInterface_->getPinocchioInterface(),
-                                                            leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
+                                                               leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_);
     dynamic_cast<HexKalmanFilterEstimate &>(*stateEstimate_).loadSettings(taskFile, verbose);
     currentObservation_.time = 0;
   }

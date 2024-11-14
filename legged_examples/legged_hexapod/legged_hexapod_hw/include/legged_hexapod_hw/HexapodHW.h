@@ -23,15 +23,25 @@ namespace legged
 {
 
   // Define JOINT_STATE_NAME and FOOT_LINK_NAME constants
-  const std::vector<std::string> JOINT_NAME = {"RF_HAA", "RF_HFE", "RF_KFE",
-                                               "RM_HAA", "RM_HFE", "RM_KFE",
-                                               "RB_HAA", "RB_HFE", "RB_KFE",
+  // 1. Normal Order
+  // const std::vector<std::string> JOINT_NAME = {"RF_HAA", "RF_HFE", "RF_KFE",
+  //                                              "RM_HAA", "RM_HFE", "RM_KFE",
+  //                                              "RB_HAA", "RB_HFE", "RB_KFE",
+  //                                              "LF_HAA", "LF_HFE", "LF_KFE",
+  //                                              "LM_HAA", "LM_HFE", "LM_KFE",
+  //                                              "LB_HAA", "LB_HFE", "LB_KFE"};
+
+  // const std::vector<std::string> CONTACT_SENSOR_NAMES = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
+  //                                                        "LF_FOOT", "LM_FOOT", "LB_FOOT"};
+  // 2. Alphabetical Order
+  const std::vector<std::string> JOINT_NAME = {"LB_HAA", "LB_HFE", "LB_KFE",
                                                "LF_HAA", "LF_HFE", "LF_KFE",
                                                "LM_HAA", "LM_HFE", "LM_KFE",
-                                               "LB_HAA", "LB_HFE", "LB_KFE"};
-
-  const std::vector<std::string> CONTACT_SENSOR_NAMES = {"RF_FOOT", "RM_FOOT", "RB_FOOT",
-                                                         "LF_FOOT", "LM_FOOT", "LB_FOOT"};
+                                               "RB_HAA", "RB_HFE", "RB_KFE",
+                                               "RF_HAA", "RF_HFE", "RF_KFE",
+                                               "RM_HAA", "RM_HFE", "RM_KFE"};
+  const std::vector<std::string> CONTACT_SENSOR_NAMES = {"LB_FOOT", "LF_FOOT", "LM_FOOT",
+                                                         "RB_FOOT", "RF_FOOT", "RM_FOOT"};
 
   // const std::vector<std::string> CONTACT_SENSOR_NAMES = {"RF_FOOT", "LF_FOOT", "RH_FOOT", "LH_FOOT"};
 
