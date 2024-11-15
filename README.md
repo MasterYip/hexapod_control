@@ -152,21 +152,26 @@ rosrun rqt_controller_manager rqt_controller_manager
 
 ### BUG
 
-- `HexapodSoftware` confilct with one of `legged_control` deps (ocs2/hpp-fcl/pinocchio)
-  throw `std::bad_alloc` when `HexapodSoftware` is running.
+- [ ] `HexapodSoftware` confilct with one of `legged_control` deps (ocs2/hpp-fcl/pinocchio)
+      throw `std::bad_alloc` when `HexapodSoftware` is running.
 
-- leg index 4 & 5 do not work properly (last 2 leg in contactNames3DoF)
-  How to find bug:
-  search: `contactPointIndex`, `contactNames3DoF`, `numThreeDofContacts`, `numFeet_`
+- [x] leg index 4 & 5 do not work properly (last 2 leg in contactNames3DoF)
+      How to find bug:
+      search: `contactPointIndex`, `contactNames3DoF`, `numThreeDofContacts`, `numFeet_`
+      **PROBLEM:** task.info mat R is not properly configured.
 
-```txt
-Subsystem: 3 out of 3
-[0]: 63,  [1]: 63,  [2]: 63,  [3]: 15,
-terminate called after throwing an instance of 'std::runtime_error'
-  what():  The time of touch-down for the last swing of the EE with ID 4 is not defined.
-```
+### TODO
 
-Need a better reference generator.
+- [ ] Better reference generator needed
+
+  ```txt
+  Subsystem: 3 out of 3
+  [0]: 63,  [1]: 63,  [2]: 63,  [3]: 15,
+  terminate called after throwing an instance of 'std::runtime_error'
+    what():  The time of touch-down for the last swing of the EE with ID 4 is not defined.
+  ```
+
+- [ ] New Gazebo Simulation Needed
 
 ### Note
 

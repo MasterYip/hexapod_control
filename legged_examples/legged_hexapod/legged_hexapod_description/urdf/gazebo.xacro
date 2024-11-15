@@ -16,6 +16,16 @@
         </plugin>
     </gazebo>
 
+    <!-- simulates a 6 dof position and rate sensor -->
+    <!-- <gazebo>
+        <plugin name="p3d" filename="libgazebo_ros_p3d.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>100.0</updateRate>
+            <bodyName>base</bodyName>
+            <topicName>torso_odom</topicName>
+            <frameName>world</frameName>
+        </plugin>
+    </gazebo> -->
     <gazebo>
         <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
             <alwaysOn>true</alwaysOn>
@@ -41,16 +51,6 @@
         </plugin>
     </gazebo>
 
-    <!-- simulates a 6 dof position and rate sensor -->
-    <!-- <gazebo>
-        <plugin name="p3d" filename="libgazebo_ros_p3d.so">
-            <alwaysOn>true</alwaysOn>
-            <updateRate>100.0</updateRate>
-            <bodyName>base</bodyName>
-            <topicName>torso_odom</topicName>
-            <frameName>world</frameName>
-        </plugin>
-    </gazebo> -->
 
     <!-- imu plugin -->
     <!-- <gazebo reference="${ns}imu_link">

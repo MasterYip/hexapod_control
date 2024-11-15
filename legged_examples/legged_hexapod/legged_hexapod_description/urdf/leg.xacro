@@ -137,7 +137,7 @@
                     <mesh filename="${mesh_path}/${name}_FOOT.STL" />
                 </geometry>
                 <material name="">
-                    <color rgba="0.2 0.2 0.2 1" />
+                    <color rgba="0.4 0.4 0.4 1" />
                 </material>
             </visual>
             <collision>
@@ -190,7 +190,7 @@
             <self_collide>1</self_collide>
             <material>Gazebo/DarkGrey</material>
         </gazebo>
-        <gazebo reference="{name}_SHANK">
+        <gazebo reference="${ns}${name}_SHANK">
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
             <self_collide>1</self_collide>
