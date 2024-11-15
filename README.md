@@ -94,7 +94,7 @@ roslaunch legged_unitree_description empty_world.launch
 source ~/Documents/CodeSpace/ROS_ws/hexapod_ws/devel/setup.bash
 
 roslaunch user main.launch \
-controller_type:=pc \
+controller_type:=hlc \
 robot_name:=elspider_air \
 joystick_type:=keyboard_sim \
 gazebo_hang_up:=false \
