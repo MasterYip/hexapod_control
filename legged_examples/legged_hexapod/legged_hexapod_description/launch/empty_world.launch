@@ -14,9 +14,13 @@
     </include>
     <!-- push robot_description to factory and spawn robot in gazebo -->
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" clear_params="true"
-          args="-z 0.25 -param legged_robot_description -urdf -model $(arg robot_type)
-                  -J aRF_HFE -0.5 -J aRF_KFE 1 -J bRM_HFE -0.5 -J bRM_KFE 1 -J cRB_HFE -0.5 -J cRB_KFE 1
-                  -J dLF_HFE -0.5 -J dLF_KFE 1 -J eLM_HFE -0.5 -J eLM_KFE 1 -J fLB_HFE -0.5 -J fLB_KFE 1
+          args="-z 0.14 -param legged_robot_description -urdf -model $(arg robot_type)
+                  -J aRF_HAA 0.0 -J aRF_HFE -0.3490 -J aRF_KFE 0.349 
+                  -J bRM_HAA 0.0 -J bRM_HFE -0.3490 -J bRM_KFE 0.349 
+                  -J cRB_HAA 0.0 -J cRB_HFE -0.3490 -J cRB_KFE 0.349
+                  -J dLF_HAA 0.0 -J dLF_HFE -0.3490 -J dLF_KFE 0.349 
+                  -J eLM_HAA 0.0 -J eLM_HFE -0.3490 -J eLM_KFE 0.349 
+                  -J fLB_HAA 0.0 -J fLB_HFE -0.3490 -J fLB_KFE 0.349
                   " output="screen"/>
     <!-- Rviz -->
     <node name="rviz" pkg="rviz" type="rviz"

@@ -18,9 +18,9 @@
     <xacro:property name="haa_position_min" value="-0.785"/>
 
     <xacro:property name="hfe_position_max" value="3.14"/>
-    <xacro:property name="hfe_position_min" value="-0.7"/>
+    <xacro:property name="hfe_position_min" value="-0.349"/>
 
-    <xacro:property name="kfe_position_max" value="3.925"/>
+    <xacro:property name="kfe_position_max" value="3.403"/>
     <xacro:property name="kfe_position_min" value="-0.7"/>
 
     <xacro:property name="trunk_mass" value="${15.8991*trunk_mass_coe}"/>
