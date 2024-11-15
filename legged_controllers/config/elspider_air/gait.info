@@ -27,6 +27,21 @@ trot
    switchingTimes
    {
      [0]     0.0
+     [1]     0.7
+     [2]     1.4
+   }
+}
+
+fast_trot
+ {
+   modeSequence
+   {
+     [0]     TRIPOD1
+     [1]     TRIPOD2
+   }
+   switchingTimes
+   {
+     [0]     0.0
      [1]     0.3
      [2]     0.6
    }
