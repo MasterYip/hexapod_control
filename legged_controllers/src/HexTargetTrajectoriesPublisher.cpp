@@ -14,7 +14,7 @@ namespace {
 scalar_t TARGET_DISPLACEMENT_VELOCITY;
 scalar_t TARGET_ROTATION_VELOCITY;
 scalar_t COM_HEIGHT;
-vector_t DEFAULT_JOINT_STATE(12);
+vector_t DEFAULT_JOINT_STATE(18);
 scalar_t TIME_TO_TARGET;
 }  // namespace
 
