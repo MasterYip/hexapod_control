@@ -182,16 +182,19 @@
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
             <self_collide>1</self_collide>
+            <material>Gazebo/DarkGrey</material>
         </gazebo>
         <gazebo reference="${ns}${name}_THIGH">
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
             <self_collide>1</self_collide>
+            <material>Gazebo/DarkGrey</material>
         </gazebo>
         <gazebo reference="{name}_SHANK">
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
             <self_collide>1</self_collide>
+            <material>Gazebo/DarkGrey</material>
         </gazebo>
         <gazebo reference="${ns}${name}_FOOT">
             <mu1>0.6</mu1>
@@ -202,6 +205,7 @@
             <kd value="1.0"/> -->
             <kp value="20.0"/>
             <kd value="10.0"/>
+            <material>Gazebo/DarkGrey</material>
         </gazebo>
 
     </xacro:macro>

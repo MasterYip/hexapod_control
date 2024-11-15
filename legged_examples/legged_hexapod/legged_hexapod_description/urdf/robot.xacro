@@ -15,6 +15,7 @@
     <xacro:include filename="$(find legged_hexapod_description)/urdf/const.xacro"/>
     <xacro:include filename="$(find legged_hexapod_description)/urdf/trunk.xacro"/>
     <xacro:include filename="$(find legged_hexapod_description)/urdf/leg.xacro"/>
+    <xacro:include filename="$(find legged_hexapod_description)/urdf/imu.xacro"/>
     <xacro:include filename="$(find legged_hexapod_description)/urdf/gazebo.xacro"/>
     <xacro:if value="${sensor_module_name == 'HexPercept1'}">
         <xacro:include filename="$(find hexapod_elevation_mapping)/model/modules/HexPercept1/HexPercept1.xacro"/>
@@ -34,6 +35,10 @@
             <origin rpy="0 0 0" xyz="0.361 0 0"/>
         </xacro:HexPercept3>
     </xacro:if>
+
+
+    <xacro:IMU connected_to="base" imu_name="base_imu" xyz="0. 0. 0." rpy="0. 0. 0."/>
+
 
     <xacro:leg name="aRF" mirror="1" back = "1" special = "1" special2 = "1">
         <origin rpy="0 -0 0" xyz="0.3 -0.08 0.011"/>
