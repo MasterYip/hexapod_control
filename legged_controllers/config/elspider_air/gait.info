@@ -2,6 +2,7 @@ list
 {
   [0] stance
   [1] trot
+  [2] fast_trot
 }
 
 stance
