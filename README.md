@@ -1,19 +1,16 @@
-# legged_control
+# hexapod_control
+
+<!-- Video -->
+<p align="center">
+    <video src="https://github.com/user-attachments/assets/2ae7c19d-651e-4f3e-ba75-49d12e3e5da2" width="200" height="100" autoplay controls muted loop playsinline></video>
+</p>
 
 ## Installation
 
-### Hexapod Dep
+### Hexapod Execute Dependencies
 
-- hexapod_robot_assets
-
-### Source code
-
-The source code is hosted on GitHub: [qiayuanliao/legged_control](https://github.com/qiayuanliao/legged_control).
-
-```
-# Clone legged_control
-git clone git@github.com:qiayuanliao/legged_control.git
-```
+- [hexapod_robot_assets](https://github.com/HITSME-HexLab/hexapod_robot_assets)
+- [HexapodSoftware](https://github.com/Qrpucp/HexapodSoftware)
 
 ### OCS2
 
@@ -90,6 +87,7 @@ source ~/Documents/CodeSpace/ROS_ws/legged_ws/devel/setup.bash
 ```bash
 roslaunch legged_unitree_description empty_world.launch
 #roslaunch legged_hexapod_description empty_world.launch (Do not run this command)
+
 # HexapodSoftware Simulation
 source ~/Documents/CodeSpace/ROS_ws/hexapod_ws/devel/setup.bash
 
@@ -103,7 +101,7 @@ interface_type:=gazebo
 
 Or on the robot hardware:
 
-> **IMPORTANT**: Hexapod is controlled by `HexapodSoftware', therefore select `hardware` for both simulation and hardware.
+> **IMPORTANT**: Hexapod is controlled by `HexapodSoftware`, therefore select `hardware` for both simulation and hardware.
 
 ```bash
 roslaunch legged_unitree_hw legged_unitree_hw.launch
