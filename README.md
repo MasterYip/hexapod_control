@@ -160,6 +160,8 @@ rosrun rqt_controller_manager rqt_controller_manager
       search: `contactPointIndex`, `contactNames3DoF`, `numThreeDofContacts`, `numFeet_`
       **PROBLEM:** task.info mat R is not properly configured.
 
+- [ ] IMU Odom is not working properly (position not updated)
+
 ### TODO
 
 - [ ] Better reference generator needed
