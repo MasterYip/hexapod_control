@@ -2,7 +2,7 @@
 
 <!-- red bold -->
 
-> <font color=red>**NOTE**: This package is still under development.</font>
+> <font color=red>**NOTE**: This package is still under development. Reference to it carefully.</font>
 
 <!-- Video -->
 <p align="center">
