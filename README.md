@@ -1,5 +1,9 @@
 # hexapod_control
 
+<!-- red bold -->
+
+> <font color=red>**NOTE**: This package is still under development.</font>
+
 <!-- Video -->
 <p align="center">
     <video src="https://github.com/user-attachments/assets/2ae7c19d-651e-4f3e-ba75-49d12e3e5da2" width="200" height="100" autoplay controls muted loop playsinline></video>
