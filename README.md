@@ -1,8 +1,8 @@
 # hexapod_control
 
-<!-- red bold -->
+Hexapod MPC-WBC controller adapted from [legged_control](https://github.com/qiayuanl/legged_control) based on [OCS2](https://github.com/leggedrobotics/ocs2).
 
-> <font color=red>**NOTE**: This package is still under development. Reference to it carefully.</font>
+> <font color=red>**NOTE**: This package is still under development. Refer to it carefully.</font>
 
 <!-- Video -->
 <p align="center">
