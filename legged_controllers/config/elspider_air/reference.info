@@ -1,28 +1,28 @@
 targetDisplacementVelocity          0.4;
-targetRotationVelocity              1.57;
+targetRotationVelocity              1.0;
 
-comHeight                           0.30
+comHeight                           0.26
 
 defaultJointState
 {
-   (0,0)  0.0   ; RF_HAA
-   (1,0)  1.4   ; RF_HFE
-   (2,0)  1.4   ; RF_KFE
-   (3,0)  0.0   ; RM_HAA
-   (4,0)  1.4   ; RM_HFE
-   (5,0)  1.4   ; RM_KFE
-   (6,0)  0.0   ; RB_HAA
-   (7,0)  1.4   ; RB_HFE
-   (8,0)  1.4   ; RB_KFE
-   (9,0)  0.0   ; LF_HAA
-   (10,0) 1.4   ; LF_HFE
-   (11,0) 1.4   ; LF_KFE
-   (12,0) 0.0   ; LM_HAA
-   (13,0) 1.4   ; LM_HFE
-   (14,0) 1.4   ; LM_KFE
-   (15,0) 0.0   ; LB_HAA
-   (16,0) 1.4   ; LB_HFE
-   (17,0) 1.4   ; LB_KFE
+   (0,0)  0.32   ; RF_HAA
+   (1,0)  1.2   ; RF_HFE
+   (2,0)  1.2   ; RF_KFE
+   (3,0)  0.32   ; RM_HAA
+   (4,0)  1.2   ; RM_HFE
+   (5,0)  1.2   ; RM_KFE
+   (6,0)  0.32   ; RB_HAA
+   (7,0)  1.2   ; RB_HFE
+   (8,0)  1.2   ; RB_KFE
+   (9,0)  0.32   ; LF_HAA
+   (10,0) 1.2   ; LF_HFE
+   (11,0) 1.2   ; LF_KFE
+   (12,0) 0.32   ; LM_HAA
+   (13,0) 1.2   ; LM_HFE
+   (14,0) 1.2   ; LM_KFE
+   (15,0) 0.32   ; LB_HAA
+   (16,0) 1.2   ; LB_HFE
+   (17,0) 1.2   ; LB_KFE
 }
 
 defaultJointState_comment
